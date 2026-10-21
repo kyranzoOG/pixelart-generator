@@ -1,0 +1,841 @@
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+
+/* ================= Sekmeler ================= */
+const tabButtons = [...document.querySelectorAll('.tab-btn')];
+const tabPanels = document.querySelectorAll('.tab-panel');
+const tab2Btn = $('tab2Btn'), tab3Btn = $('tab3Btn');
+function goToTab(id) {
+  tabButtons.forEach((b, i) => {
+    const on = b.dataset.tab === id;
+    b.classList.toggle('active', on);
+    if (on) $('tabInk').style.transform = `translateX(${i * 100}%)`;
+  });
+  tabPanels.forEach(p => p.classList.toggle('active', p.id === id));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+tabButtons.forEach(b => b.addEventListener('click', () => { if (!b.disabled) goToTab(b.dataset.tab); }));
+
+/* ================= Toast ================= */
+let toastTimer;
+function showToast(msg, isError) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', !!isError);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function fastCopy(text, okMsg) {
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+    ok ? showToast(okMsg || 'Kopyalandı!') : showToast('Kopyalama başarısız.', true);
+  };
+  if (!navigator.clipboard || !navigator.clipboard.writeText) return fallback();
+  navigator.clipboard.writeText(text).then(() => showToast(okMsg || 'Kopyalandı!')).catch(fallback);
+}
+
+/* ================= Yükleniyor + görev çalıştırıcı ================= */
+const loadingOverlay = $('loadingOverlay'), loadingText = $('loadingText');
+const loadingProgress = $('loadingProgress'), loadingBar = $('loadingBar');
+const actionButtons = [];
+let failsafe = null;
+function showLoading(text) {
+  loadingText.textContent = text || 'İşleniyor, lütfen bekleyin...';
+  updateProgress(0);
+  loadingOverlay.classList.add('show');
+  actionButtons.forEach(b => b && (b.disabled = true));
+  clearTimeout(failsafe);
+  failsafe = setTimeout(() => { hideLoading(); showToast('İşlem zaman aşımına uğradı, tekrar deneyin.', true); }, 30000);
+}
+function updateProgress(p) { loadingProgress.textContent = p ? p + '%' : ''; loadingBar.style.width = p + '%'; }
+function hideLoading() {
+  loadingOverlay.classList.remove('show');
+  actionButtons.forEach(b => b && (b.disabled = false));
+  clearTimeout(failsafe);
+}
+function runWithLoading(text, fn) {
+  showLoading(text);
+  return Promise.resolve().then(fn)
+    .catch(e => { console.error(e); showToast('Bir hata oluştu.', true); })
+    .finally(hideLoading);
+}
+
+/* ================= Slider ve ortak öğeler ================= */
+const sizeSlider = $('sizeSlider'), sizeDisplay = $('sizeDisplay'), partSelect = $('partSelect');
+const textSizeSlider = $('textSizeSlider'), textSizeDisplay = $('textSizeDisplay');
+const manualSizeSlider = $('manualSizeSlider'), manualSizeDisplay = $('manualSizeDisplay');
+
+/* ================= Coin + 24 saatlik kilit sistemi ================= */
+const FREE_SIZE_LIMIT = 40, DAY_MS = 24 * 3600 * 1000;
+const KEY_UNLOCKS = 'vieartUnlocksV2', KEY_COINS = 'vieartCoins';
+let SIZE_TIERS = [50, 75, 100, 125, 150, 175, 200];
+let TIER_COSTS = { 50: 20, 75: 40, 100: 60, 125: 90, 150: 120, 175: 160, 200: 200 };
+let UNLOCK_MS = DAY_MS;
+
+const readJSON = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
+const writeJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+let unlocks = readJSON(KEY_UNLOCKS, {});  // { kademe: bitişZamanı }
+let coins = Number(readJSON(KEY_COINS, 0)) || 0;
+
+const isActive = t => unlocks[t] && unlocks[t] > Date.now();
+const getMaxAllowedSize = () => SIZE_TIERS.reduce((m, t) => (isActive(t) && t > m ? t : m), FREE_SIZE_LIMIT);
+function pruneExpired() {
+  let changed = false;
+  Object.keys(unlocks).forEach(t => { if (unlocks[t] <= Date.now()) { delete unlocks[t]; changed = true; } });
+  if (changed) writeJSON(KEY_UNLOCKS, unlocks);
+  return changed;
+}
+function guardSliderValue(el) {
+  const max = getMaxAllowedSize();
+  if (parseInt(el.value, 10) > max) { el.value = max; return true; }
+  return false;
+}
+const sizeLockHints = [];
+function updateLockHints() {
+  const max = getMaxAllowedSize();
+  const msg = max >= 200 ? "Tüm boyut kademelerinin kilidi açık (200x'e kadar)."
+    : 'Şu an açık maksimum boyut: ' + max + 'x — daha büyüğü için 🔓 butonunu kullanın.';
+  sizeLockHints.forEach(el => el.textContent = msg);
+  [sizeSlider, textSizeSlider, manualSizeSlider].forEach(s => {
+    s.max = max;
+    guardSliderValue(s);
+  });
+  sizeDisplay.textContent = sizeSlider.value + 'x';
+  textSizeDisplay.textContent = textSizeSlider.value + 'x';
+  manualSizeDisplay.textContent = manualSizeSlider.value + 'x' + manualSizeSlider.value;
+}
+const fmtTime = ms => {
+  const s = Math.max(0, Math.floor(ms / 1000)), p = n => String(n).padStart(2, '0');
+  return p(Math.floor(s / 3600)) + ':' + p(Math.floor((s % 3600) / 60)) + ':' + p(s % 60);
+};
+function renderUnlockStatus() {
+  const box = $('activeUnlocks');
+  const active = SIZE_TIERS.filter(isActive);
+  if (!active.length) { box.innerHTML = ''; return; }
+  const existing = new Map([...box.children].map(c => [c.dataset.t, c]));
+  active.forEach(t => {
+    let chip = existing.get(String(t));
+    if (!chip) { chip = document.createElement('span'); chip.className = 'unlock-chip'; chip.dataset.t = t; box.appendChild(chip); }
+    chip.textContent = '🔓 ' + t + 'x · ' + fmtTime(unlocks[t] - Date.now());
+    existing.delete(String(t));
+  });
+  existing.forEach(c => c.remove());
+}
+function renderCoins(bump) {
+  $('coinBalance').textContent = coins;
+  if (bump) { const b = document.querySelector('.coin-balance'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); }
+}
+function grantTier(tier, expiresAt) {
+  unlocks[tier] = expiresAt || Date.now() + UNLOCK_MS;
+  writeJSON(KEY_UNLOCKS, unlocks);
+  updateLockHints(); renderUnlockStatus();
+}
+// Her saniye: geri sayım + süre bitince kilidi otomatik kapat
+setInterval(() => {
+  if (pruneExpired()) { updateLockHints(); showToast('Bir boyut kilidinin süresi doldu, kilit tekrar kapandı.', true); }
+  renderUnlockStatus();
+}, 1000);
+
+// Coin kazanma: %50 → 2, %50 → 3
+$('coinEarnBtn').addEventListener('click', e => {
+  coins += Math.random() < 0.5 ? 2 : 3;
+  const gained = coins - (Number(readJSON(KEY_COINS, 0)) || 0);
+  writeJSON(KEY_COINS, coins);
+  renderCoins(true);
+  const img = e.currentTarget.querySelector('.coin-img');
+  img.classList.remove('spin'); void img.offsetWidth; img.classList.add('spin');
+  showToast('+' + gained + ' coin kazandın!');
+  if ($('unlockOverlay').classList.contains('show')) refreshCoinBtn();
+});
+document.querySelectorAll('.coin-img').forEach(i => i.addEventListener('error', () => { i.replaceWith(Object.assign(document.createElement('span'), { textContent: '🪙' })); }));
+
+/* Kilit açma penceresi */
+const unlockOverlay = $('unlockOverlay'), unlockTierSelect = $('unlockTierSelect');
+const unlockPasswordInput = $('unlockPasswordInput'), unlockError = $('unlockError');
+const unlockConfirmBtn = $('unlockConfirmBtn'), unlockCoinBtn = $('unlockCoinBtn');
+function refreshCoinBtn() {
+  const t = parseInt(unlockTierSelect.value, 10);
+  if (!t) { $('unlockCoinLabel').textContent = 'Coin ile Aç'; unlockCoinBtn.disabled = true; return; }
+  const cost = TIER_COSTS[t];
+  $('unlockCoinLabel').textContent = `${t}x'i ${cost} Coin ile Aç (bakiye: ${coins})`;
+  unlockCoinBtn.disabled = false;
+}
+function openUnlockModal() {
+  const locked = SIZE_TIERS.filter(t => !isActive(t));
+  unlockError.textContent = ''; unlockPasswordInput.value = '';
+  unlockTierSelect.innerHTML = '';
+  const none = locked.length === 0;
+  if (none) unlockTierSelect.innerHTML = '<option value="">— Tüm kademeler zaten açık —</option>';
+  locked.forEach(t => unlockTierSelect.add(new Option(`${t}x (${TIER_COSTS[t]} coin)`, t)));
+  unlockPasswordInput.disabled = unlockConfirmBtn.disabled = none;
+  refreshCoinBtn();
+  unlockOverlay.classList.add('show');
+  if (!none) unlockPasswordInput.focus();
+}
+const closeUnlockModal = () => unlockOverlay.classList.remove('show');
+unlockTierSelect.addEventListener('change', refreshCoinBtn);
+unlockOverlay.addEventListener('click', e => { if (e.target === unlockOverlay) closeUnlockModal(); });
+$('unlockCancelBtn').addEventListener('click', closeUnlockModal);
+unlockPasswordInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockConfirmBtn.click(); });
+
+// Şifre doğrulaması sunucuda yapılır (.env)
+unlockConfirmBtn.addEventListener('click', async () => {
+  const tier = parseInt(unlockTierSelect.value, 10);
+  const password = unlockPasswordInput.value.trim();
+  if (!tier) return;
+  unlockConfirmBtn.disabled = true;
+  try {
+    const res = await fetch('/api/unlock', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tier, password }) });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.ok) {
+      grantTier(tier, data.expiresAt);
+      closeUnlockModal();
+      showToast(tier + 'x kilidi 24 saatliğine açıldı! Tüm modlarda geçerli.');
+    } else {
+      unlockError.textContent = data.error || 'Şifre yanlış, tekrar deneyin.';
+      unlockError.classList.remove('shake'); void unlockError.offsetWidth; unlockError.classList.add('shake');
+    }
+  } catch (e) {
+    unlockError.textContent = 'Sunucuya ulaşılamadı. server.js çalışıyor mu?';
+  } finally { unlockConfirmBtn.disabled = false; }
+});
+
+unlockCoinBtn.addEventListener('click', () => {
+  const tier = parseInt(unlockTierSelect.value, 10);
+  if (!tier) return;
+  const cost = TIER_COSTS[tier];
+  if (coins < cost) { unlockError.textContent = `Yetersiz coin: ${cost - coins} coin daha gerekiyor.`; return; }
+  coins -= cost; writeJSON(KEY_COINS, coins); renderCoins(true);
+  grantTier(tier);
+  closeUnlockModal();
+  showToast(tier + 'x kilidi coin ile 24 saatliğine açıldı!');
+});
+
+$('unlockResetBtn').addEventListener('click', () => {
+  if (!Object.keys(unlocks).length) return showToast('Zaten açık kademe yok, sıfırlanacak bir şey yok.');
+  if (!confirm('Bu cihazda açılmış TÜM boyut kilitleri sıfırlanacak. Emin misiniz?')) return;
+  unlocks = {}; writeJSON(KEY_UNLOCKS, unlocks);
+  updateLockHints(); renderUnlockStatus(); closeUnlockModal();
+  showToast('Tüm kilit açma kayıtları sıfırlandı. Ücretsiz limit tekrar ' + FREE_SIZE_LIMIT + 'x.');
+});
+
+/* ================= Mod geçişi ================= */
+let mode = 'image', manualInitialized = false;
+const modeBtns = { image: $('modeImageBtn'), text: $('modeTextBtn'), manual: $('modeManualBtn'), ie: $('modeIeBtn') };
+const modeSections = { image: $('imageModeSection'), text: $('textModeSection'), manual: $('manualModeSection'), ie: $('ieModeSection') };
+function setMode(m) {
+  mode = m;
+  Object.keys(modeBtns).forEach(k => {
+    modeBtns[k].classList.toggle('active', k === m);
+    const s = modeSections[k];
+    s.hidden = k !== m;
+    if (k === m) { s.style.animation = 'none'; void s.offsetWidth; s.style.animation = ''; }
+  });
+  if (m === 'manual' && !manualInitialized) initManualCanvas(parseInt(manualSizeSlider.value, 10));
+}
+Object.keys(modeBtns).forEach(k => modeBtns[k].addEventListener('click', () => setMode(k)));
+
+/* ================= Blok renk veritabanı ================= */
+const hex = h => { const n = parseInt(h.replace('#', ''), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const HUES = ['white','grey','dark_grey','black','violet','blue','cyan','dark_green','green','yellow','brown','orange','red','magenta','pink'];
+const mk = s => Object.fromEntries(s.split(' ').map((c, i) => [HUES[i], hex(c)]));
+const WOOL_HUE = mk('#eaeced #8e8e87 #3f4448 #15151a #7a2aad #35399d #158a91 #556e1c #70b91a #f9c628 #724829 #f17614 #a12723 #be45b4 #ee8dac');
+const CONCRETE_HUE = mk('#cfd5d6 #7d7d73 #373a3e #080a0f #64209c #2d2f8f #157788 #495b24 #5ea919 #f1af15 #603c20 #e06101 #8e2121 #a9309f #d6658f');
+const CLAY_HUE = mk('#d2b2a1 #876b62 #3a2a24 #251710 #764656 #4a3c5b #575b5b #4c532a #687635 #ba8523 #4d3324 #a25426 #8f3d2f #96586d #a24e4f');
+const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+
+function buildBlockTable() {
+  const T = {};
+  Object.keys(CLAY_HUE).forEach(h => {
+    const base = CLAY_HUE[h];
+    T['hardened_clay:' + h] = base;
+    T['hardened_clay:carved_' + h] = mix(base, [0, 0, 0], 0.15);
+    T['hardened_clay:cracked_' + h] = mix(base, [150, 150, 150], 0.18);
+  });
+  ['blue','cyan','green','magenta','orange','pink','red','violet','white','yellow'].forEach(n => {
+    T['mesecons_lightstone:lightstone_' + n + '_off'] = mix(WOOL_HUE[n], [255, 255, 255], 0.45);
+  });
+  Object.keys(WOOL_HUE).forEach(h => T['wool:' + h] = WOOL_HUE[h]);
+  T['concrete:concrete'] = hex('#b0b0ac');
+  Object.keys(CONCRETE_HUE).forEach(h => T['concrete:concrete_' + h] = CONCRETE_HUE[h]);
+  T['quartz:quartz_brick_pink'] = mix(hex('#e6e1d8'), WOOL_HUE.pink, 0.35);
+  // Ten rengi blokları: manuel listede gizli, yalnızca otomatik ten algılamasıyla seçilir
+  T['stripped_wood:apple'] = hex('#c68642');
+  T['stripped_wood:birch'] = hex('#e0ac69');
+  T['sand'] = hex('#f1c27d');
+  return T;
+}
+const BLOCK_TABLE = buildBlockTable();
+const BLOCK_ENTRIES = Object.entries(BLOCK_TABLE);
+
+/* ================= Lab renk eşleme motoru ================= */
+const srgbToLinear = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+function rgbToLab(r, g, b) {
+  const rl = srgbToLinear(r), gl = srgbToLinear(g), bl = srgbToLinear(b);
+  const x = rl * 0.4124564 + gl * 0.3575761 + bl * 0.1804375;
+  const y = rl * 0.2126729 + gl * 0.7151522 + bl * 0.0721750;
+  const z = rl * 0.0193339 + gl * 0.1191920 + bl * 0.9503041;
+  const f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+  const fx = f(x / 0.95047), fy = f(y), fz = f(z / 1.08883);
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+const SKIN_BLOCK_IDS = ['stripped_wood:apple', 'stripped_wood:birch', 'sand'];
+const LAB_ENTRIES = BLOCK_ENTRIES.map(([id, c]) => [id, rgbToLab(c[0], c[1], c[2])]);
+const SKIN_LAB = LAB_ENTRIES.filter(([id]) => SKIN_BLOCK_IDS.includes(id));
+const NORMAL_LAB = LAB_ENTRIES.filter(([id]) => !SKIN_BLOCK_IDS.includes(id));
+function isSkinToneColor(r, g, b) {
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+  return r > 95 && g > 40 && b > 20 && (mx - mn) > 15 && Math.abs(r - g) > 15 && r > g && r > b;
+}
+function nearestBlock(r, g, b) {
+  const [L, a, bb] = rgbToLab(r, g, b);
+  const set = isSkinToneColor(r, g, b) ? SKIN_LAB : NORMAL_LAB;
+  let best = null, bd = Infinity;
+  for (const [id, lab] of set) {
+    const d = (L - lab[0]) ** 2 + (a - lab[1]) ** 2 + (bb - lab[2]) ** 2;
+    if (d < bd) { bd = d; best = id; }
+  }
+  return best;
+}
+const RAINBOW_SEQUENCE = ['red','orange','yellow','green','cyan','blue','violet','magenta','pink'].map(h => 'concrete:concrete_' + h);
+
+const HUE_KEYS_SORTED = ['dark_green','dark_grey','white','cyan','green','blue','yellow','red','orange','magenta','grey','pink','violet','brown','black'];
+const HUE_LABELS_TR = { white:'Beyaz', grey:'Açık Gri', dark_grey:'Koyu Gri', black:'Siyah', violet:'Mor', blue:'Mavi', cyan:'Camgöbeği', dark_green:'Koyu Yeşil', green:'Açık Yeşil (Lime)', yellow:'Sarı', brown:'Kahverengi', orange:'Turuncu', red:'Kırmızı', magenta:'Menekşe', pink:'Pembe' };
+function hueCategoryOf(id) {
+  for (const h of HUE_KEYS_SORTED) if (new RegExp('(^|[:_])' + h + '($|[_])').test(id)) return h;
+  return 'grey';
+}
+const BLOCKS_BY_HUE = Object.fromEntries(HUE_KEYS_SORTED.map(h => [h, []]));
+BLOCK_ENTRIES.forEach(([id, rgb]) => { if (!SKIN_BLOCK_IDS.includes(id)) BLOCKS_BY_HUE[hueCategoryOf(id)].push([id, rgb]); });
+
+/* ================= Ortak ızgara durumu ================= */
+let gridBlocks = null, gridColors = null, gridW = 0, gridH = 0, uploadedImage = null;
+const rgbCss = c => `rgb(${c[0]},${c[1]},${c[2]})`;
+function renderToCanvas(canvas, maxPx) {
+  if (!gridBlocks || !gridW || !gridH) return;
+  const cell = Math.max(1, Math.floor(maxPx / Math.max(gridW, gridH)));
+  canvas.width = gridW * cell; canvas.height = gridH * cell;
+  const c = canvas.getContext('2d');
+  c.clearRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < gridH; y++) for (let x = 0; x < gridW; x++) {
+    const col = gridColors[y][x];
+    if (col) { c.fillStyle = rgbCss(col); c.fillRect(x * cell, y * cell, cell, cell); }
+  }
+}
+function countFilled() {
+  let n = 0;
+  if (gridBlocks) for (let y = 0; y < gridH; y++) for (let x = 0; x < gridW; x++) if (gridBlocks[y][x]) n++;
+  return n;
+}
+function get180Rotated(blocks) {
+  const h = blocks.length; if (!h) return [];
+  const w = blocks[0].length;
+  return Array.from({ length: h }, (_, y) => Array.from({ length: w }, (_, x) => blocks[h - 1 - y][w - 1 - x]));
+}
+const metaHTML = (label, n) => `<span>Genişlik: ${gridW}</span><span>Yükseklik: ${gridH}</span><span>${label}: ${n}</span>`;
+const previewCanvas = $('previewCanvas'), previewMeta = $('previewMeta');
+function renderPreview() { renderToCanvas(previewCanvas, 480); previewMeta.innerHTML = metaHTML('Toplam blok', countFilled()); }
+function fillPartSelect(sel, max, def) {
+  sel.innerHTML = '';
+  for (let i = 1; i <= max; i++) {
+    const o = new Option(i === 1 ? '1 Parça (Tek parça)' : i + ' Parçaya Böl' + (i === def ? ' (Varsayılan)' : ''), i);
+    o.selected = i === def; sel.add(o);
+  }
+}
+
+/* ================= GÖRSEL MODU ================= */
+const imageInput = $('imageInput'), convertBtn = $('convertBtn');
+const downloadImgBtn = $('downloadImgBtn'), generateBtn = $('generateBtn'), copyAllBtn = $('copyAllBtn');
+actionButtons.push(convertBtn, downloadImgBtn, generateBtn, copyAllBtn);
+fillPartSelect(partSelect, 10, 6);
+sizeLockHints.push($('sizeLockHint'), $('textSizeLockHint'), $('manualSizeLockHint'));
+['sizeUnlockBtn', 'textSizeUnlockBtn', 'manualSizeUnlockBtn'].forEach(id => $(id).addEventListener('click', openUnlockModal));
+
+sizeSlider.addEventListener('input', () => { guardSliderValue(sizeSlider); sizeDisplay.textContent = sizeSlider.value + 'x'; });
+imageInput.addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const img = new Image();
+  img.onload = () => { uploadedImage = img; showToast('Görsel yüklendi.'); };
+  img.src = URL.createObjectURL(file);
+  e.target.value = '';
+});
+convertBtn.addEventListener('click', () => {
+  if (!uploadedImage) return showToast('Önce bir görsel yükleyin!', true);
+  runWithLoading("Pixel art'a çevriliyor...", async () => {
+    await convertImageAsync();
+    tab2Btn.disabled = false; goToTab('tab2'); renderPreview();
+  });
+});
+async function convertImageAsync() {
+  const w = parseInt(sizeSlider.value, 10);
+  const h = Math.max(1, Math.round(w * uploadedImage.height / uploadedImage.width));
+  const off = document.createElement('canvas'); off.width = w; off.height = h;
+  const oc = off.getContext('2d'); oc.imageSmoothingEnabled = true;
+  oc.drawImage(uploadedImage, 0, 0, w, h);
+  const data = oc.getImageData(0, 0, w, h).data;
+  gridW = w; gridH = h; gridBlocks = []; gridColors = [];
+  for (let y = 0; y < h; y++) {
+    const rb = [], rc = [];
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4;
+      const id = nearestBlock(data[i], data[i + 1], data[i + 2]);
+      rb.push(id); rc.push(BLOCK_TABLE[id]);
+    }
+    gridBlocks.push(rb); gridColors.push(rc);
+    if (y % 6 === 0) { updateProgress(Math.round(y / h * 100)); await nextFrame(); }
+  }
+  updateProgress(100);
+}
+
+/* ================= METİN / EMOJİ MODU ================= */
+const textInput = $('textInput'), fontSelect = $('fontSelect'), recommendNote = $('recommendNote');
+const colorModeSelect = $('colorModeSelect'), customSwatchWrap = $('customSwatchWrap'), swatchList = $('swatchList');
+const textPartSelect = $('textPartSelect'), textLiveCanvasWrap = $('textLiveCanvasWrap');
+const textLiveCanvas = $('textLiveCanvas'), textHighSizeWarning = $('textHighSizeWarning');
+const textLiveMeta = $('textLiveMeta'), textContinueBtn = $('textContinueBtn');
+actionButtons.push(textContinueBtn);
+fillPartSelect(textPartSelect, 4, 1);
+
+// [id, etiket, aile, yedek, ağırlık, harfAralığı(em), önerilen]
+const FONT_STYLES = [
+  ['press-start-2p','Press Start 2P (Pixel)','Press Start 2P','monospace',400,0.02,40],
+  ['vt323','VT323 (Terminal / Pixel)','VT323','monospace',400,0.02,35],
+  ['bungee','Bungee (Kalın Display)','Bungee','sans-serif',400,0,20],
+  ['bangers','Bangers (Çizgi Roman)','Bangers','cursive',400,0.02,22],
+  ['anton','Anton (Kalın Dar)','Anton','sans-serif',400,0,18],
+  ['oswald','Oswald Bold','Oswald','sans-serif',700,0,20],
+  ['bebas','Bebas Neue (Dar Display)','Bebas Neue','sans-serif',400,0.02,18],
+  ['pacifico','Pacifico (El Yazısı)','Pacifico','cursive',400,0,45],
+  ['dancing','Dancing Script (El Yazısı)','Dancing Script','cursive',400,0,45],
+  ['great-vibes','Great Vibes (İnce Kaligrafi)','Great Vibes','cursive',400,0,50],
+  ['sacramento','Sacramento (El Yazısı)','Sacramento','cursive',400,0,48],
+  ['satisfy','Satisfy (El Yazısı)','Satisfy','cursive',400,0,42],
+  ['caveat','Caveat (El Yazısı)','Caveat','cursive',400,0,38],
+  ['marker','Permanent Marker (Kalın Kalem)','Permanent Marker','cursive',400,0,25],
+  ['creepster','Creepster (Korku)','Creepster','cursive',400,0,30],
+  ['cinzel','Cinzel (Roma / Şık)','Cinzel','serif',400,0.03,28],
+  ['unifraktur','UnifrakturMaguntia (Gotik)','UnifrakturMaguntia','cursive',400,0,35],
+  ['medieval','MedievalSharp (Ortaçağ)','MedievalSharp','cursive',400,0,32],
+  ['rye','Rye (Vahşi Batı)','Rye','cursive',400,0,25],
+  ['righteous','Righteous (Yuvarlak Display)','Righteous','sans-serif',400,0,22],
+  ['monoton','Monoton (Neon)','Monoton','cursive',400,0,20],
+  ['orbitron','Orbitron (Bilim Kurgu)','Orbitron','sans-serif',700,0.02,25],
+  ['audiowide','Audiowide (Fütüristik)','Audiowide','sans-serif',400,0,25],
+  ['black-ops','Black Ops One (Askeri Stencil)','Black Ops One','sans-serif',400,0,22],
+  ['chewy','Chewy (Eğlenceli Kalın)','Chewy','cursive',400,0,20],
+  ['fredoka','Fredoka (Yuvarlak Kalın)','Fredoka','sans-serif',600,0,20],
+  ['lobster','Lobster (Script/Kalın)','Lobster','cursive',400,0,30],
+  ['playfair','Playfair Display Bold (Şık Serif)','Playfair Display','serif',700,0,30],
+  ['roboto-mono','Roboto Mono (Sabit Genişlik)','Roboto Mono','monospace',400,0,30],
+  ['montserrat','Montserrat Bold (Modern/Varsayılan)','Montserrat','sans-serif',700,0,25]
+].map(([id, label, fam, fallback, weight, ls, rec]) => ({ id, label, family: `"${fam}"`, fallback, weight, letterSpacingEm: ls, recommended: rec }));
+FONT_STYLES.forEach(f => fontSelect.add(new Option(f.label, f.id)));
+fontSelect.value = 'montserrat';
+
+const getSelectedFont = () => FONT_STYLES.find(f => f.id === fontSelect.value) || FONT_STYLES[FONT_STYLES.length - 1];
+const fontCss = (f, px) => `${f.weight} ${px}px ${f.family}, ${f.fallback}`;
+let customColors = {}, textTimer = null;
+
+function updateRecommendNote() { recommendNote.textContent = 'Önerilen tek harf boyutu: ' + getSelectedFont().recommended + 'x'; }
+function handleSizeThresholdUI() {
+  const big = parseInt(textSizeSlider.value, 10) >= 40;
+  textLiveCanvasWrap.style.display = big ? 'none' : 'flex';
+  textHighSizeWarning.hidden = !big;
+  textContinueBtn.textContent = 'Sonucu Göster → Canlı Önizleme';
+}
+function scheduleTextUpdate() {
+  clearTimeout(textTimer);
+  if (parseInt(textSizeSlider.value, 10) >= 40) return;
+  textTimer = setTimeout(() => runTextUpdate(true), 350);
+}
+fontSelect.addEventListener('change', () => {
+  const f = getSelectedFont();
+  updateRecommendNote();
+  textSizeSlider.value = f.recommended; guardSliderValue(textSizeSlider);
+  textSizeDisplay.textContent = textSizeSlider.value + 'x';
+  handleSizeThresholdUI(); scheduleTextUpdate();
+});
+textSizeSlider.addEventListener('input', () => {
+  guardSliderValue(textSizeSlider);
+  textSizeDisplay.textContent = textSizeSlider.value + 'x';
+  handleSizeThresholdUI(); scheduleTextUpdate();
+});
+colorModeSelect.addEventListener('change', () => {
+  customSwatchWrap.hidden = colorModeSelect.value !== 'custom';
+  if (colorModeSelect.value === 'custom') renderSwatches();
+  scheduleTextUpdate();
+});
+textInput.addEventListener('input', () => { if (colorModeSelect.value === 'custom') renderSwatches(); scheduleTextUpdate(); });
+
+function runTextUpdate(live) {
+  if (mode !== 'text') return Promise.resolve();
+  if (!textInput.value.trim()) {
+    gridBlocks = gridColors = null; gridW = gridH = 0;
+    textLiveCanvas.getContext('2d').clearRect(0, 0, textLiveCanvas.width, textLiveCanvas.height);
+    textLiveMeta.innerHTML = '<span>Genişlik: —</span><span>Yükseklik: —</span><span>Dolu blok: —</span>';
+    return Promise.resolve();
+  }
+  const size = parseInt(textSizeSlider.value, 10);
+  if (live && size >= 40) return Promise.resolve();
+  return runWithLoading('Metin işleniyor...', async () => {
+    await buildTextGridAsync();
+    tab2Btn.disabled = false;
+    if (size < 40) renderToCanvas(textLiveCanvas, 260);
+    textLiveMeta.innerHTML = metaHTML('Dolu blok', countFilled());
+  });
+}
+function layoutText(ctx, lines, ref, lsEm) {
+  const charLayout = []; let maxWidth = 0, vis = 0;
+  const lineHeight = ref * 1.25;
+  lines.forEach((line, li) => {
+    let x = 0;
+    Array.from(line).forEach(ch => {
+      const w = ctx.measureText(ch).width || ref * 0.5;
+      const visible = ch.trim() !== '';
+      charLayout.push({ ch, line: li, x, w, visIndex: visible ? vis : -1 });
+      if (visible) vis++;
+      x += w + lsEm * ref;
+    });
+    maxWidth = Math.max(maxWidth, x);
+  });
+  return { charLayout, maxWidth, totalHeight: lines.length * lineHeight, lineHeight, visibleCount: vis };
+}
+function renderSwatches() {
+  const f = getSelectedFont();
+  const mctx = document.createElement('canvas').getContext('2d');
+  mctx.font = fontCss(f, 100);
+  const layout = layoutText(mctx, textInput.value.split('\n'), 100, f.letterSpacingEm);
+  swatchList.innerHTML = '';
+  const seen = new Set();
+  layout.charLayout.forEach(c => {
+    if (c.visIndex < 0 || seen.has(c.visIndex)) return;
+    seen.add(c.visIndex);
+    const item = document.createElement('div'); item.className = 'swatch-item';
+    const label = document.createElement('span'); label.textContent = c.ch;
+    const input = document.createElement('input'); input.type = 'color';
+    input.value = customColors[c.visIndex] || '#3ecf6b';
+    input.addEventListener('input', () => { customColors[c.visIndex] = input.value; scheduleTextUpdate(); });
+    item.append(label, input); swatchList.appendChild(item);
+  });
+}
+function cropToBoundingBox(blocks, colors) {
+  const h = blocks.length, w = h ? blocks[0].length : 0;
+  let minX = w, maxX = -1, minY = h, maxY = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (blocks[y][x]) {
+    if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y;
+  }
+  if (maxX < 0) return { blocks: [], colors: [], w: 0, h: 0 };
+  const nb = [], nc = [];
+  for (let y = minY; y <= maxY; y++) { nb.push(blocks[y].slice(minX, maxX + 1)); nc.push(colors[y].slice(minX, maxX + 1)); }
+  return { blocks: nb, colors: nc, w: maxX - minX + 1, h: maxY - minY + 1 };
+}
+async function buildTextGridAsync() {
+  const f = getSelectedFont();
+  const letterH = parseInt(textSizeSlider.value, 10);
+  const SCALE = letterH >= 40 ? 3 : 6, REF = 100;
+  try { await document.fonts.load(fontCss(f, 32), textInput.value); } catch (e) {}
+  const mctx = document.createElement('canvas').getContext('2d');
+  mctx.font = fontCss(f, REF);
+  const layout = layoutText(mctx, textInput.value.split('\n'), REF, f.letterSpacingEm);
+  if (layout.maxWidth <= 0) { gridW = gridH = 0; gridBlocks = gridColors = null; return; }
+
+  const sf = (letterH * SCALE) / layout.lineHeight;
+  const cw = Math.max(SCALE, Math.round(layout.maxWidth * sf));
+  const ch = Math.max(SCALE, Math.round(layout.totalHeight * sf));
+  gridW = Math.max(1, Math.round(cw / SCALE)); gridH = Math.max(1, Math.round(ch / SCALE));
+
+  const mask = document.createElement('canvas'); mask.width = cw; mask.height = ch;
+  const mc = mask.getContext('2d');
+  mc.font = fontCss(f, REF * sf); mc.textBaseline = 'alphabetic'; mc.fillStyle = '#000';
+  const chars = layout.charLayout.map(c => ({
+    ch: c.ch, visIndex: c.visIndex, x: c.x * sf, w: c.w * sf,
+    lineTop: c.line * layout.lineHeight * sf, lineBottom: (c.line + 1) * layout.lineHeight * sf,
+    baselineY: (c.line + 0.82) * layout.lineHeight * sf
+  }));
+  let drawn = 0;
+  for (const c of chars) { mc.fillText(c.ch, c.x, c.baselineY); if (++drawn % 40 === 0) await nextFrame(); }
+
+  const img = mc.getImageData(0, 0, cw, ch).data;
+  const cm = colorModeSelect.value;
+  gridBlocks = []; gridColors = [];
+  for (let gy = 0; gy < gridH; gy++) {
+    const rb = new Array(gridW).fill(null), rc = new Array(gridW).fill(null);
+    const py0 = gy * SCALE, py1 = Math.min(ch, py0 + SCALE);
+    for (let gx = 0; gx < gridW; gx++) {
+      const px0 = gx * SCALE, px1 = Math.min(cw, px0 + SCALE);
+      let sum = 0, n = 0;
+      for (let py = py0; py < py1; py++) for (let px = px0; px < px1; px++) { sum += img[(py * cw + px) * 4 + 3]; n++; }
+      if ((n ? sum / n : 0) > 60) {
+        const cx = px0 + SCALE / 2, cy = py0 + SCALE / 2;
+        const owner = chars.find(c => c.visIndex >= 0 && cx >= c.x && cx <= c.x + c.w && cy >= c.lineTop && cy <= c.lineBottom);
+        let id;
+        if (cm === 'rainbow' && owner) id = RAINBOW_SEQUENCE[owner.visIndex % RAINBOW_SEQUENCE.length];
+        else if (cm === 'custom' && owner && customColors[owner.visIndex]) { const c = hex(customColors[owner.visIndex]); id = nearestBlock(c[0], c[1], c[2]); }
+        else id = 'concrete:concrete';
+        rb[gx] = id; rc[gx] = BLOCK_TABLE[id];
+      }
+    }
+    gridBlocks.push(rb); gridColors.push(rc);
+    if (gy % 8 === 0) await nextFrame();
+  }
+  const cr = cropToBoundingBox(gridBlocks, gridColors);
+  gridBlocks = cr.blocks; gridColors = cr.colors; gridW = cr.w; gridH = cr.h;
+}
+textContinueBtn.addEventListener('click', async () => {
+  if (!textInput.value.trim()) return showToast('Önce bir metin girin!', true);
+  await runTextUpdate(false);
+  if (gridBlocks) { tab2Btn.disabled = false; goToTab('tab2'); renderPreview(); }
+});
+
+/* ================= MANUEL ÇİZİM MODU ================= */
+const manualPartSelect = $('manualPartSelect'), manualAddBtn = $('manualAddBtn');
+const manualColorStep = $('manualColorStep'), manualBlockStep = $('manualBlockStep');
+const hueGrid = $('hueGrid'), blockList = $('blockList'), quickPalette = $('quickPalette');
+const manualClearBtn = $('manualClearBtn'), manualCanvas = $('manualCanvas'), manualMeta = $('manualMeta');
+const manualContinueBtn = $('manualContinueBtn');
+actionButtons.push(manualAddBtn, manualClearBtn, manualContinueBtn);
+fillPartSelect(manualPartSelect, 10, 6);
+let manualPalette = [], activeBlockId = null, isPainting = false;
+
+function initManualCanvas(size) {
+  gridW = gridH = size;
+  gridBlocks = Array.from({ length: size }, () => new Array(size).fill(null));
+  gridColors = Array.from({ length: size }, () => new Array(size).fill(null));
+  manualInitialized = true;
+  renderToCanvas(manualCanvas, 480); updateManualMeta();
+}
+const updateManualMeta = () => manualMeta.innerHTML = metaHTML('Dolu blok', gridBlocks ? countFilled() : 0);
+
+manualSizeSlider.addEventListener('input', () => {
+  guardSliderValue(manualSizeSlider);
+  manualSizeDisplay.textContent = manualSizeSlider.value + 'x' + manualSizeSlider.value;
+});
+manualSizeSlider.addEventListener('change', () => {
+  guardSliderValue(manualSizeSlider);
+  const size = parseInt(manualSizeSlider.value, 10);
+  if (countFilled() > 0 && !confirm('Tuval boyutunu değiştirmek mevcut çiziminizi sıfırlayacaktır. Devam edilsin mi?')) {
+    manualSizeSlider.value = gridW; manualSizeDisplay.textContent = gridW + 'x' + gridW; return;
+  }
+  manualSizeDisplay.textContent = size + 'x' + size;
+  initManualCanvas(size);
+  showToast('Tuval ' + size + 'x' + size + ' olarak sıfırlandı.');
+});
+function swatchButton(rgb, text, cls) {
+  const btn = document.createElement('button'); btn.type = 'button'; if (cls) btn.className = cls;
+  const box = document.createElement('div'); box.className = 'box'; box.style.background = rgbCss(rgb);
+  const label = document.createElement('span'); label.textContent = text;
+  btn.append(box, label); return btn;
+}
+manualAddBtn.addEventListener('click', () => {
+  manualBlockStep.hidden = true; manualColorStep.hidden = false;
+  hueGrid.innerHTML = '';
+  HUE_KEYS_SORTED.forEach(h => {
+    const b = swatchButton(WOOL_HUE[h], HUE_LABELS_TR[h] || h, 'hue-swatch');
+    b.addEventListener('click', () => showBlockStep(h));
+    hueGrid.appendChild(b);
+  });
+});
+function showBlockStep(hue) {
+  manualColorStep.hidden = true; manualBlockStep.hidden = false;
+  $('manualBlockStepTitle').textContent = 'Adım 2 — ' + (HUE_LABELS_TR[hue] || hue) + ' Tonundaki Bloklar';
+  blockList.innerHTML = '';
+  (BLOCKS_BY_HUE[hue] || []).forEach(([id, rgb]) => {
+    const b = swatchButton(rgb, id);
+    b.addEventListener('click', () => addToPalette(id, rgb));
+    blockList.appendChild(b);
+  });
+}
+$('manualBackBtn').addEventListener('click', () => { manualBlockStep.hidden = true; manualColorStep.hidden = false; });
+function addToPalette(id, rgb) {
+  if (!manualPalette.find(p => p.id === id)) manualPalette.push({ id, rgb });
+  activeBlockId = id;
+  manualColorStep.hidden = manualBlockStep.hidden = true;
+  renderQuickPalette();
+  showToast(id + ' paletine eklendi ve fırça olarak seçildi.');
+}
+function renderQuickPalette() {
+  quickPalette.innerHTML = '';
+  const eraser = document.createElement('div');
+  eraser.className = 'palette-item' + (activeBlockId === null ? ' active' : '');
+  eraser.innerHTML = '<span>🧹 Sil (Boş)</span>';
+  eraser.addEventListener('click', () => { activeBlockId = null; renderQuickPalette(); });
+  quickPalette.appendChild(eraser);
+  manualPalette.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'palette-item' + (activeBlockId === p.id ? ' active' : '');
+    const box = document.createElement('div'); box.className = 'box'; box.style.background = rgbCss(p.rgb);
+    const label = document.createElement('span'); label.textContent = p.id.split(':')[1] || p.id;
+    item.append(box, label);
+    item.addEventListener('click', () => { activeBlockId = p.id; renderQuickPalette(); });
+    quickPalette.appendChild(item);
+  });
+}
+manualClearBtn.addEventListener('click', () => {
+  if (!gridBlocks) return;
+  for (let y = 0; y < gridH; y++) for (let x = 0; x < gridW; x++) { gridBlocks[y][x] = null; gridColors[y][x] = null; }
+  renderToCanvas(manualCanvas, 480); updateManualMeta(); showToast('Tuval temizlendi.');
+});
+function paintAt(cx, cy) {
+  if (!gridBlocks) return;
+  const r = manualCanvas.getBoundingClientRect();
+  const cell = manualCanvas.width / gridW;
+  const gx = Math.floor((cx - r.left) * (manualCanvas.width / r.width) / cell);
+  const gy = Math.floor((cy - r.top) * (manualCanvas.height / r.height) / cell);
+  if (gx < 0 || gy < 0 || gx >= gridW || gy >= gridH) return;
+  gridBlocks[gy][gx] = activeBlockId || null;
+  gridColors[gy][gx] = activeBlockId ? BLOCK_TABLE[activeBlockId] : null;
+  renderToCanvas(manualCanvas, 480); updateManualMeta();
+}
+manualCanvas.addEventListener('pointerdown', e => { isPainting = true; paintAt(e.clientX, e.clientY); });
+manualCanvas.addEventListener('pointermove', e => { if (isPainting) paintAt(e.clientX, e.clientY); });
+window.addEventListener('pointerup', () => isPainting = false);
+manualContinueBtn.addEventListener('click', () => {
+  if (!gridBlocks || countFilled() === 0) return showToast('Önce tuvale en az bir blok yerleştirin!', true);
+  tab2Btn.disabled = false; goToTab('tab2'); renderPreview();
+});
+
+/* ================= /ie YARDIMI (16x16 HEX okuyucu) ================= */
+const ieOutputSection = $('ieOutputSection'), ieCanvas = $('ieCanvas'), ieSelectedHex = $('ieSelectedHex');
+let ieImage = null, iePixelColors = [];
+const rgbToHexStr = (r, g, b) => '#' + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
+
+$('ieImageInput').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const img = new Image();
+  img.onload = () => {
+    ieImage = img; showToast('IE Görseli yüklendi.');
+    runWithLoading('16x16 canlı tuval hazırlanıyor...', convertIeAsync);
+  };
+  img.src = URL.createObjectURL(file);
+  e.target.value = '';
+});
+async function convertIeAsync() {
+  // Ham piksel rengi okunur (nearestBlock çağrılmaz): amaç birebir HEX değeri
+  const off = document.createElement('canvas'); off.width = off.height = 16;
+  const oc = off.getContext('2d'); oc.imageSmoothingEnabled = true;
+  oc.drawImage(ieImage, 0, 0, 16, 16);
+  const d = oc.getImageData(0, 0, 16, 16).data;
+  iePixelColors = Array.from({ length: 16 }, (_, y) => Array.from({ length: 16 }, (_, x) => {
+    const i = (y * 16 + x) * 4;
+    return d[i + 3] > 20 ? [d[i], d[i + 1], d[i + 2]] : null;
+  }));
+  renderIeCanvas();
+  ieOutputSection.hidden = false;
+  ieSelectedHex.textContent = 'Piksele tıklayın';
+  await nextFrame();
+}
+function renderIeCanvas() {
+  const cell = 8; ieCanvas.width = ieCanvas.height = 16 * cell;
+  const c = ieCanvas.getContext('2d');
+  for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+    const rgb = iePixelColors[y][x];
+    c.fillStyle = rgb ? rgbCss(rgb) : (x + y) % 2 === 0 ? '#E2E8F0' : '#F1F5F9';
+    c.fillRect(x * cell, y * cell, cell, cell);
+  }
+}
+ieCanvas.addEventListener('click', e => {
+  if (!iePixelColors.length) return;
+  const r = ieCanvas.getBoundingClientRect(), cell = ieCanvas.width / 16;
+  const gx = Math.floor((e.clientX - r.left) * (ieCanvas.width / r.width) / cell);
+  const gy = Math.floor((e.clientY - r.top) * (ieCanvas.height / r.height) / cell);
+  if (gx < 0 || gy < 0 || gx >= 16 || gy >= 16) return;
+  const rgb = iePixelColors[gy][gx];
+  if (rgb) {
+    const h = rgbToHexStr(...rgb);
+    ieSelectedHex.textContent = `[X:${gx}, Y:${gy}] -> ${h}`;
+    fastCopy(h, `HEX Kodu kopyalandı: ${h}`);
+  } else ieSelectedHex.textContent = `[X:${gx}, Y:${gy}] -> Boş Piksel`;
+});
+$('ieCopyAllBtn').addEventListener('click', () => {
+  if (!iePixelColors.length) return showToast('Önce bir görsel yükleyin!', true);
+  const lines = [];
+  for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+    const rgb = iePixelColors[y][x];
+    if (rgb) lines.push(`X:${x} Y:${y} -> ${rgbToHexStr(...rgb)}`);
+  }
+  if (!lines.length) return showToast('Kopyalanacak dolu piksel yok!', true);
+  fastCopy(lines.join('\n'), 'Tüm HEX kodları panoya kopyalandı!');
+});
+
+/* ================= SEKME 2: Önizleme ================= */
+downloadImgBtn.addEventListener('click', () => {
+  if (!gridBlocks) return showToast('İndirilecek piksel art bulunamadı!', true);
+  const a = document.createElement('a');
+  a.download = `vienas_pixelart_${gridW}x${gridH}.png`;
+  a.href = previewCanvas.toDataURL('image/png'); a.click();
+  showToast('Piksel Art indirildi.');
+});
+
+/* ================= SEKME 3: WorldEdit komutları (180° ters) ================= */
+let generatedParts = [];
+generateBtn.addEventListener('click', () => {
+  if (!gridBlocks) return showToast('Önce görsel dönüştürün, metin girin veya manuel çizim yapın!', true);
+  runWithLoading('Komutlar hazırlanıyor (180° ters kod dönüşümü uygulanıyor)...', async () => {
+    const lines = await generateCommandLinesAsync();
+    const sel = mode === 'text' ? textPartSelect : mode === 'manual' ? manualPartSelect : partSelect;
+    const n = parseInt(sel.value, 10);
+    generatedParts = splitIntoParts(lines, n);
+    $('partTitle').innerHTML = `<span class="dot"></span>WorldEdit Kopyalama Merkezi (${n} Parça)`;
+    renderCommandParts(generatedParts);
+    tab3Btn.disabled = false; $('copyAllWrap').hidden = false;
+    goToTab('tab3');
+    showToast('Komutlar hazır (180° ters kodlandı) ve kopyalama sekmesine aktarıldı!');
+  });
+});
+async function generateCommandLinesAsync() {
+  const rot = get180Rotated(gridBlocks);
+  const lines = ['/1', '/2'];
+  for (let y = 0; y < gridH; y++) {
+    for (let x = 0; x < gridW; x++) {
+      if (rot[y][x]) lines.push('/mix ' + rot[y][x]);
+      if (x < gridW - 1) lines.push('/shift x 1');
+    }
+    if (y < gridH - 1) { lines.push('/shift x -' + (gridW - 1)); lines.push('/shift y 1'); }
+    if (y % 8 === 0) { updateProgress(Math.round(y / gridH * 100)); await nextFrame(); }
+  }
+  updateProgress(100);
+  return lines;
+}
+function splitIntoParts(lines, n) {
+  const base = Math.floor(lines.length / n); let rem = lines.length % n, idx = 0;
+  const parts = [];
+  for (let i = 0; i < n; i++) { const c = base + (rem-- > 0 ? 1 : 0); parts.push(lines.slice(idx, idx + c)); idx += c; }
+  return parts;
+}
+function renderCommandParts(parts) {
+  const box = $('partsContainer'); box.innerHTML = '';
+  const grid = document.createElement('div'); grid.className = 'parts-grid';
+  parts.forEach((part, i) => {
+    const card = document.createElement('div'); card.className = 'part-card';
+    const h3 = document.createElement('h3'); h3.textContent = `${i + 1}. Parça (${part.length} Satır Komut)`;
+    const btn = document.createElement('button'); btn.className = 'btn-green'; btn.textContent = `${i + 1}. Parçayı Kopyala`;
+    btn.addEventListener('click', () => fastCopy(part.join('\n'), `${i + 1}. Parça kopyalandı!`));
+    card.append(h3, btn); grid.appendChild(card);
+  });
+  box.appendChild(grid);
+}
+copyAllBtn.addEventListener('click', () => {
+  if (!generatedParts.length) return showToast('Kopyalanacak komut yok!', true);
+  fastCopy(generatedParts.map(p => p.join('\n')).join('\n'), 'Tüm parçalar panoya kopyalandı!');
+});
+
+/* ================= Başlangıç ================= */
+async function init() {
+  try {
+    const cfg = await (await fetch('/api/config')).json();
+    if (cfg.tiers) SIZE_TIERS = cfg.tiers;
+    if (cfg.costs) TIER_COSTS = cfg.costs;
+    if (cfg.hours) UNLOCK_MS = cfg.hours * 3600 * 1000;
+  } catch (e) { /* sunucu yoksa varsayılanlar kullanılır */ }
+  pruneExpired();
+  renderCoins(false); updateLockHints(); renderUnlockStatus(); handleSizeThresholdUI();
+}
+init();
+})();

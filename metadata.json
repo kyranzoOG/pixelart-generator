@@ -1,0 +1,6 @@
+{
+  "name": "Pixel Art Generator",
+  "description": "Generate high-precision WorldEdit pixel art commands for MultiCraft & Minetest from images, text, and manual drawing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

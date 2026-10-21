@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg: #000000;
+    --card: #090d05;
+    --card2: #0f1509;
+    --border: #233113;
+    --border-bright: #bef264;
+    --text: #f3fbe4;
+    --muted: #8ca36d;
+    --pistachio: #bef264;
+    --pistachio-glow: rgba(190, 242, 100, 0.35);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+}
+
+/* Background interactive grid and scanline texture */
+.bg-grid-pistachio {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(190, 242, 100, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(190, 242, 100, 0.07) 1px, transparent 1px);
+}
+
+.bg-dot-pistachio {
+  background-image: radial-gradient(rgba(190, 242, 100, 0.18) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Glow effects */
+.glow-pistachio {
+  box-shadow: 0 0 25px rgba(190, 242, 100, 0.25);
+}
+
+.glow-pistachio-sm {
+  box-shadow: 0 0 12px rgba(190, 242, 100, 0.2);
+}
+
+.glow-pistachio-text {
+  text-shadow: 0 0 14px rgba(190, 242, 100, 0.45);
+}
+
+.border-glow {
+  border-color: rgba(190, 242, 100, 0.45);
+  box-shadow: 0 0 15px rgba(190, 242, 100, 0.15);
+}
+
+/* Pixel canvas rendering */
+canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #050803;
+}
+::-webkit-scrollbar-thumb {
+  background: #233113;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bef264;
+}
+
+/* Custom range inputs */
+input[type="range"] {
+  accent-color: #bef264;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}

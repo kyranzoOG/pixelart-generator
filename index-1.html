@@ -1,0 +1,348 @@
+<html lang="en" data-fp="xuzrrhm9ico" class="translated-ltr"><head><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+  <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=abb55760-e154-4ea9-bb47-4962b3d54e68
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MultiCraft Vienas Art — Pixel Art Command Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=VT323&amp;family=Bungee&amp;family=Bangers&amp;family=Anton&amp;family=Oswald:wght@700&amp;family=Bebas+Neue&amp;family=Pacifico&amp;family=Dancing+Script&amp;family=Great+Vibes&amp;family=Sacramento&amp;family=Satisfy&amp;family=Caveat&amp;family=Permanent+Marker&amp;family=Creepster&amp;family=Cinzel&amp;family=UnifrakturMaguntia&amp;family=MedievalSharp&amp;family=Rye&amp;family=Righteous&amp;family=Monoton&amp;family=Orbitron&amp;family=Audiowide&amp;family=Black+Ops+One&amp;family=Chewy&amp;family=Fredoka:wght@600&amp;family=Lobster&amp;family=Playfair+Display:wght@700&amp;family=Roboto+Mono&amp;family=Montserrat:wght@700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+<script>(function(s){s.dataset.zone='12054608',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script><link rel="preconnect" href="https://ay267.com"><link type="text/css" rel="stylesheet" charset="UTF-8" href="https://www.gstatic.com/_/translate_http/_/ss/k=translate_http.tr.zZZZhVqDDCw.L.W.O/am=AADA/d=0/rs=AN8SPfqr7eOYsG8ngHYsF_DtyJ1UBn3taQ/m=el_main_css"></head><script data-zone="12054608" src="https://al5sm.com/tag.min.js"></script>
+<body>
+  <!-- Yükleniyor -->
+  <div class="overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Processing, please wait...</font></font></div>
+    <div class="loading-bar"><i id="loadingBar"></i></div>
+    <div class="loading-progress" id="loadingProgress"></div>
+  </div>
+
+  <!-- Kilit açma penceresi -->
+  <div class="overlay" id="unlockOverlay">
+    <div class="unlock-card">
+      <h3><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🔒 Unlock Larger Size</font></font></h3>
+      <label for="unlockTierSelect"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Size Level</font></font></label>
+      <select id="unlockTierSelect"></select>
+      <label for="unlockPasswordInput"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Password</font></font></label>
+      <input type="password" id="unlockPasswordInput" placeholder="Enter the password" autocomplete="off">
+      <div class="unlock-error" id="unlockError"></div>
+      <div class="row">
+        <button class="btn-outline" id="unlockCancelBtn" style="flex:1"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Give up</font></font></button>
+        <button class="btn-blue" id="unlockConfirmBtn" style="flex:1"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Unlock</font></font></button>
+      </div>
+      <div class="divider"><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">or </font></font></span></div>
+      <button class="btn-gold btn-full" id="unlockCoinBtn">
+        <img class="coin-img" src="images/coin.png" alt=""> <span id="unlockCoinLabel"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Open with Coin</font></font></span>
+      </button>
+      <button type="button" class="unlock-btn" id="unlockResetBtn" style="margin-top:14px"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🔄 Reset all unlock records on this device.</font></font></button>
+    </div>
+  </div>
+
+  <header>
+    <h1><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">MultiCraft </font></font><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Viennas Art</font></font></span></h1>
+    <p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">2D Pixel Art Command Generator</font></font></p>
+  </header>
+
+  <!-- Coin alanı -->
+  <section class="coin-panel" aria-label="Coin area">
+    <div class="coin-balance"><img class="coin-img" src="images/coin.png" alt="Coin"><b id="coinBalance"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">0</font></font></b></div>
+    <button class="btn-gold" id="coinEarnBtn"><img class="coin-img" src="images/coin.png" alt=""><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Click/Earn Coins</font></font></button>
+    <div class="coin-hint"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">With each click, there's a 50% chance you'll get 2 coins, and a 50% chance you'll get 3 coins. You can unlock a level of access for 24 hours with each coin.</font></font></div>
+    <div class="active-unlocks" id="activeUnlocks"></div>
+  </section>
+
+  <nav class="tabbar">
+    <button class="tab-btn active" data-tab="tab1"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">1. Image / Text / Manual</font></font></button>
+    <button class="tab-btn" data-tab="tab2" id="tab2Btn" disabled=""><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">2. Live Preview</font></font></button>
+    <button class="tab-btn" data-tab="tab3" id="tab3Btn" disabled=""><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">3. WorldEdit Commands</font></font></button>
+    <i class="tab-ink" id="tabInk"></i>
+  </nav>
+
+  <main>
+    <!-- TAB 1 -->
+    <section class="tab-panel active" id="tab1">
+      <div class="mode-toggle">
+        <button type="button" class="mode-btn active" id="modeImageBtn" data-mode="image"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🖼️ From Photo to Pixel Art</font></font></button>
+        <button type="button" class="mode-btn" id="modeTextBtn" data-mode="text"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🔤 Text / Emoji Mode</font></font></button>
+        <button type="button" class="mode-btn" id="modeManualBtn" data-mode="manual"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">✏️ Create Your Own</font></font></button>
+        <button type="button" class="mode-btn" id="modeIeBtn" data-mode="ie"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🎨 /ie Help</font></font></button>
+      </div>
+
+      <!-- GÖRSEL MODU -->
+      <div class="card" id="imageModeSection">
+        <h2><span class="dot"></span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Image &amp; Size Settings</font></font></h2>
+        <label class="field-label" for="imageInput"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Upload Image</font></font></label>
+        <input type="file" id="imageInput" accept="image/*">
+        <div class="field">
+          <label class="field-label" for="sizeSlider"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Dimensions (Width, Max 200x)</font></font></label>
+          <input type="range" id="sizeSlider" min="1" max="40" value="20">
+          <div class="size-display" id="sizeDisplay"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">20x</font></font></div>
+          <div class="lock-hint" id="sizeLockHint"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">The current maximum size available is 40x — use the 🔓 button for a larger size.</font></font></div>
+          <button type="button" class="unlock-btn" id="sizeUnlockBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🔓 Unlock Larger Size</font></font></button>
+        </div>
+        <div class="field">
+          <label class="field-label" for="partSelect"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">How many equal parts should the command be divided into?</font></font></label>
+          <select id="partSelect"><option value="1"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">1 Piece (Single piece)</font></font></option><option value="2"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 2 parts</font></font></option><option value="3"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 3 parts</font></font></option><option value="4"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 4 parts</font></font></option><option value="5"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 5 parts</font></font></option><option value="6"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 6 parts (Default)</font></font></option><option value="7"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 7 parts</font></font></option><option value="8"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 8 parts</font></font></option><option value="9"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 9 parts</font></font></option><option value="10"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 10 pieces</font></font></option></select>
+        </div>
+        <div class="row"><button class="btn-blue btn-full" id="convertBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Convert to Pixel Art</font></font></button></div>
+      </div>
+
+      <!-- METİN MODU -->
+      <div class="card" id="textModeSection" hidden="">
+        <h2><span class="dot"></span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Text &amp; Emoji Settings</font></font></h2>
+        <label class="field-label" for="textInput"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Text / Emoji (unlimited characters, multi-line support)</font></font></label>
+        <textarea class="text-input" id="textInput" placeholder="Example: VIENNA ⚔️🔥"></textarea>
+        <div class="field">
+          <label class="field-label" for="fontSelect"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Font Styles (30 Fonts)</font></font></label>
+          <select id="fontSelect"><option value="press-start-2p"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Press Start 2P (Pixel)</font></font></option><option value="vt323"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">VT323 (Terminal / Pixel)</font></font></option><option value="bungee"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Bungee (Thick Display)</font></font></option><option value="bangers"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Bangers (Comic Book)</font></font></option><option value="anton"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Anton (Thick Narrow)</font></font></option><option value="oswald"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Oswald Bold</font></font></option><option value="bebas"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Bebas Neue (Dar Display)</font></font></option><option value="pacifico"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Pacifico (Handwriting)</font></font></option><option value="dancing"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Dancing Script (Handwriting)</font></font></option><option value="great-vibes"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Great Vibes (Fine Calligraphy)</font></font></option><option value="sacramento"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Sacramento (Handwriting)</font></font></option><option value="satisfy"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Satisfy (Handwriting)</font></font></option><option value="caveat"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Caveat (Handwriting)</font></font></option><option value="marker"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Permanent Marker (Thick Pen)</font></font></option><option value="creepster"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Creepster (Horror)</font></font></option><option value="cinzel"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Cinzel (Rome / Chic)</font></font></option><option value="unifraktur"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">UnifracturMaguntia (Gothic)</font></font></option><option value="medieval"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Medieval Sharp</font></font></option><option value="rye"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Rye (Wild West)</font></font></option><option value="righteous"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Righteous (Round Display)</font></font></option><option value="monoton"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Monoton (Neon)</font></font></option><option value="orbitron"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Orbitron (Science Fiction)</font></font></option><option value="audiowide"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Audiowide (Futuristic)</font></font></option><option value="black-ops"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Black Ops One (Military Stencil)</font></font></option><option value="chewy"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Chewy (Stay Fun)</font></font></option><option value="fredoka"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Fredoka (Round Thick)</font></font></option><option value="lobster"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Lobster (Script/Bold)</font></font></option><option value="playfair"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Playfair Display Bold (Stylish Serif)</font></font></option><option value="roboto-mono"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Roboto Mono (Fixed Width)</font></font></option><option value="montserrat"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Montserrat Bold (Modern/Default)</font></font></option></select>
+          <div class="recommend-note" id="recommendNote"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Suggested size: —</font></font></div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="textSizeSlider"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Single Font Size (Line Height, Max 200x)</font></font></label>
+          <input type="range" id="textSizeSlider" min="3" max="40" value="25">
+          <div class="size-display" id="textSizeDisplay"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">25x</font></font></div>
+          <div class="recommend-note"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Note: This value is the font size; in multi-line text, the total canvas height automatically increases according to the number of lines.</font></font></div>
+          <div class="lock-hint" id="textSizeLockHint"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">The current maximum size available is 40x — use the 🔓 button for a larger size.</font></font></div>
+          <button type="button" class="unlock-btn" id="textSizeUnlockBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🔓 Unlock Larger Size</font></font></button>
+        </div>
+        <div class="field">
+          <label class="field-label" for="colorModeSelect"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Color Mode</font></font></label>
+          <select id="colorModeSelect">
+            <option value="default" selected=""><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Default (Concrete — concrete:concrete)</font></font></option>
+            <option value="rainbow"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Rainbow (Rainbow Concrete Colors)</font></font></option>
+            <option value="custom"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Letter/Emoji Based Custom Color</font></font></option>
+          </select>
+        </div>
+        <div id="customSwatchWrap" hidden="">
+          <label class="field-label" style="margin-top:12px"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Choose a color for each character.</font></font></label>
+          <div class="swatch-list" id="swatchList"></div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="textPartSelect"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">How many equal parts should the command be divided into? (Maximum 4 in text mode)</font></font></label>
+          <select id="textPartSelect"><option value="1"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">1 Piece (Single piece)</font></font></option><option value="2"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 2 parts</font></font></option><option value="3"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 3 parts</font></font></option><option value="4"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 4 parts</font></font></option></select>
+        </div>
+        <div id="textLiveCanvasWrap" class="canvas-wrap" style="display: flex;"><canvas id="textLiveCanvas" width="260" height="130"></canvas></div>
+        <div id="textHighSizeWarning" class="warning-box" hidden=""><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">⚠️ This size (40x and above) is not suitable for live preview. Make your edits and then preview by pressing the "Show Result" button below. Or choose a size smaller than 40x.</font></font></div>
+        <div class="meta" id="textLiveMeta"><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Width: -</font></font></span><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Height: -</font></font></span><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Full block: —</font></font></span></div>
+        <div class="row"><button class="btn-blue btn-full" id="textContinueBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Show Results → Live Preview</font></font></button></div>
+      </div>
+
+      <!-- MANUEL MOD -->
+      <div class="card" id="manualModeSection" hidden="">
+        <h2><span class="dot"></span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Create Your Own — Manual Pixel Drawing</font></font></h2>
+        <label class="field-label" for="manualSizeSlider"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Canvas Size (Width = Height, Max 200x)</font></font></label>
+        <input type="range" id="manualSizeSlider" min="1" max="40" value="20">
+        <div class="size-display" id="manualSizeDisplay"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">20x20</font></font></div>
+        <div class="recommend-note"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Changing the size resets the canvas.</font></font></div>
+        <div class="lock-hint" id="manualSizeLockHint"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">The current maximum size available is 40x — use the 🔓 button for a larger size.</font></font></div>
+        <button type="button" class="unlock-btn" id="manualSizeUnlockBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🔓 Unlock Larger Size</font></font></button>
+        <div class="field">
+          <label class="field-label" for="manualPartSelect"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">How many equal parts should the command be divided into?</font></font></label>
+          <select id="manualPartSelect"><option value="1"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">1 Piece (Single piece)</font></font></option><option value="2"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 2 parts</font></font></option><option value="3"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 3 parts</font></font></option><option value="4"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 4 parts</font></font></option><option value="5"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 5 parts</font></font></option><option value="6"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 6 parts (Default)</font></font></option><option value="7"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 7 parts</font></font></option><option value="8"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 8 parts</font></font></option><option value="9"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 9 parts</font></font></option><option value="10"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Divide into 10 pieces</font></font></option></select>
+        </div>
+        <div class="row"><button class="btn-outline btn-full" id="manualAddBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">➕ Block / Add Color</font></font></button></div>
+        <div class="step-panel" id="manualColorStep" hidden="">
+          <h4><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Step 1 — Choose a Color</font></font></h4>
+          <div class="hue-grid" id="hueGrid"></div>
+        </div>
+        <div class="step-panel" id="manualBlockStep" hidden="">
+          <h4 id="manualBlockStepTitle"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Step 2 — Select a Block</font></font></h4>
+          <div class="block-list" id="blockList"></div>
+          <div class="row"><button class="btn-outline btn-full" id="manualBackBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">← Return to Color Selection</font></font></button></div>
+        </div>
+        <label class="field-label" style="margin-top:16px"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Quick Select Palette (click to use as brush)</font></font></label>
+        <div class="quick-palette" id="quickPalette"></div>
+        <div class="row"><button class="btn-outline btn-full" id="manualClearBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">🧹 Reset the Canvas</font></font></button></div>
+        <div class="canvas-wrap"><canvas id="manualCanvas" width="320" height="320"></canvas></div>
+        <div class="meta" id="manualMeta"><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Width: -</font></font></span><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Height: -</font></font></span><span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Full block: —</font></font></span></div>
+        <div class="row"><button class="btn-blue btn-full" id="manualContinueBtn"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Continue → Live Preview</font></font></button></div>
+      </div>
+
+      <!-- /ie MODU -->
+      <div class="card" id="ieModeSection" hidden="">
+        <h2><span class="dot"></span><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">/ie Help — 16x16 Live Canvas &amp; HEX Reader</font></font></h2>
+        <p class="note"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">When you select an image, a 16x16 optimized canvas appears live below. You can instantly see the HEX code by clicking on the desired pixel.</font></font></p>
+        <label class="field-label" for="ieImageInput">Görsel Yükle (IE İçin)</label>
+        <input type="file" id="ieImageInput" accept="image/*">
+        <div id="ieOutputSection" hidden="" style="margin-top:16px">
+          <div class="canvas-wrap"><canvas id="ieCanvas" width="128" height="128"></canvas></div>
+          <div class="meta" id="ieMeta">
+            <span>Durum: Hazır</span>
+            <span id="ieSelectedHex" class="hex-pick">Piksele tıklayın</span>
+          </div>
+          <div class="row"><button class="btn-outline btn-full" id="ieCopyAllBtn">Tüm HEX Kodlarını Kopyala (16x16 liste)</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2 -->
+    <section class="tab-panel" id="tab2">
+      <div class="card">
+        <h2><span class="dot"></span>Canlı Önizleme</h2>
+        <div class="canvas-wrap"><canvas id="previewCanvas" width="320" height="320"></canvas></div>
+        <div class="meta" id="previewMeta"><span>Genişlik: —</span><span>Yükseklik: —</span><span>Toplam blok: —</span></div>
+        <div class="row" style="margin-top:16px"><button class="btn-outline btn-full" id="downloadImgBtn">Piksel Art'ı PNG İndir</button></div>
+        <div class="row"><button class="btn-blue btn-full" id="generateBtn">Komutları Üret ve Kopyalama Alanına Git</button></div>
+      </div>
+    </section>
+
+    <!-- TAB 3 -->
+    <section class="tab-panel" id="tab3">
+      <div class="card">
+        <h2 id="partTitle"><span class="dot"></span>WorldEdit Kopyalama Merkezi</h2>
+        <div id="copyAllWrap" hidden="" style="margin-bottom:16px"><button class="btn-purple" id="copyAllBtn">Tüm Parçaları Tek Tıkla Kopyala</button></div>
+        <div id="partsContainer"><div class="empty-state">Henüz komut üretilmedi. Lütfen önizleme sekmesinden "Komutları Üret" butonuna basın.</div></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Copied!</font></font></div>
+  <script src="script.js"></script><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
+
+
+tml&gt;
+</font></font><script async="" src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="abb55760-e154-4ea9-bb47-4962b3d54e68" data-app-host="app.netlify.com" data-account-tier="free"></script>
+<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="display: none; border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: 'Google Sans', Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="https://fonts.gstatic.com/s/i/productlogos/translate/v14/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="//translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0"></iframe></div></div></div><iframe id="nl-badge-frame" title="Powered by NetLify" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;color-scheme&quot; content=&quot;dark&quot;&gt;&lt;style&gt;
+    :root{--nl-vw:1440px;--nl-vh:783px}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:transparent;overflow:hidden}
+    body{display:flex;align-items:flex-end;justify-content:flex-end;height:100vh;
+      padding:8px 18px 18px 8px;
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#f4f9f9;-webkit-font-smoothing:antialiased}
+    .nl-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:10px;width:max-content;max-width:calc(var(--nl-vw,100vw) - 26px)}
+    button{font-family:inherit;cursor:pointer}
+    :focus-visible{outline:2px solid #32e6e2;outline-offset:2px;border-radius:6px}
+    .nl-icon-btn{position:relative;flex:none;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid transparent;background:transparent;color:#d5e3e6;transition:background .15s ease,color .15s ease}
+    .nl-icon-btn:hover{background:rgba(255,255,255,0.08);color:#f4f9f9}
+    .nl-tap::after{content:&quot;&quot;;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:max(100%,44px);height:max(100%,44px)}
+    @keyframes nl-rise{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+  
+      .nl-card{position:relative;display:none;width:min(340px,calc(var(--nl-vw,100vw) - 26px));max-height:calc(var(--nl-vh,100vh) - 84px);overflow-y:auto;background:linear-gradient(180deg,#132832 0%,#0e1e25 100%);border:1px solid rgba(255,255,255,0.09);border-radius:18px;padding:18px;transform-origin:bottom right;animation:nl-rise .3s cubic-bezier(.34,1.4,.4,1) both}
+      .nl-card.open{display:block}
+      .nl-card-close{position:absolute;top:10px;right:10px}
+      .nl-card h2{margin:0;padding-right:30px;font-size:16px;font-weight:750;letter-spacing:-0.015em;line-height:1.35}
+      .nl-card h2 em{font-style:normal;background:linear-gradient(90deg,#32e6e2,#4d7cfe,#9a6bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+      .nl-card p{margin:8px 0 0;font-size:12.5px;color:#d5e3e6}
+      .nl-prompt{position:relative;margin-top:14px;background:#10222b;border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:10px 12px;transition:border-color .15s ease,box-shadow .15s ease}
+      .nl-prompt:focus-within{border-color:#05bdba;box-shadow:0 0 0 3px rgba(5,189,186,0.18)}
+      .nl-prompt textarea{display:block;width:100%;height:38px;resize:none;border:0;outline:none;background:transparent;color:#f4f9f9;font:inherit;font-size:13px;line-height:19px;padding:0 28px 0 0}
+      .nl-prompt textarea::placeholder{color:#a9bdc2}
+      .nl-send{position:absolute;right:9px;bottom:9px;width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:#05bdba;color:#02191b;transition:background .15s ease}
+      .nl-send:hover{background:#32e6e2}
+      @media (pointer: coarse){
+        .nl-prompt textarea{font-size:16px;line-height:21px;height:42px}
+      }
+      .nl-or{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:10.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#a9bdc2}
+      .nl-or::before,.nl-or::after{content:&quot;&quot;;flex:1;height:1px;background:rgba(255,255,255,0.09)}
+      .nl-drop{display:flex;align-items:center;justify-content:space-between;gap:6px;text-decoration:none;background:#1b3a45;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;color:#cfe0e3;transition:background .15s ease,color .15s ease,border-color .15s ease}
+      .nl-drop:hover{background:#224753;color:#f4f9f9;border-color:rgba(50,230,226,0.3)}
+      .nl-drop .nl-arrow{transition:transform .18s cubic-bezier(.34,1.4,.4,1)}
+      .nl-drop:hover .nl-arrow{transform:translateX(3px)}
+      .nl-badge{display:flex;align-items:center;gap:9px;white-space:nowrap;border:1px solid rgba(255,255,255,0.09);background:linear-gradient(180deg,#142b34,#0e1e25);color:#f4f9f9;border-radius:999px;padding:9px 14px 9px 11px;font-size:13px;font-weight:600;letter-spacing:0.01em;transition:border-color .2s ease}
+      .nl-badge:hover{border-color:rgba(50,230,226,0.26)}
+      .nl-hide{display:block;width:100%;margin-top:10px;border:0;background:transparent;color:#a9bdc2;font-size:11.5px;font-weight:600;padding:4px;border-radius:8px;transition:color .15s ease}
+      .nl-hide:hover{color:#d5e3e6;text-decoration:underline}
+      .nl-badge-label{color:#d5e3e6;font-weight:500}
+      .nl-badge-brand{font-weight:750}
+    &lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+      &lt;div class=&quot;nl-wrap&quot;&gt;
+        &lt;section class=&quot;nl-card&quot; id=&quot;nl-card&quot; aria-label=&quot;Build your own site on Netlify&quot;&gt;
+          &lt;button type=&quot;button&quot; class=&quot;nl-icon-btn nl-tap nl-card-close&quot; id=&quot;nl-card-close&quot; aria-label=&quot;Close&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 16 16&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.9&quot; stroke-linecap=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+          &lt;h2&gt;&lt;em&gt;Build your own site with Netlify&lt;/em&gt;&lt;/h2&gt;
+          &lt;p&gt;Describe what you want, and an AI agent designs, builds and deploys it in minutes.&lt;/p&gt;
+          &lt;form class=&quot;nl-prompt&quot; action=&quot;https://app.netlify.com/start&quot; method=&quot;get&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
+            &lt;textarea name=&quot;prompt&quot; rows=&quot;2&quot; required maxlength=&quot;300&quot; autocomplete=&quot;off&quot;
+                      enterkeyhint=&quot;go&quot;
+                      placeholder=&quot;A shop for my handmade surfboards&amp;hellip;&quot;
+                      aria-label=&quot;Describe the site you want to build&quot;&gt;&lt;/textarea&gt;
+            &lt;button type=&quot;submit&quot; class=&quot;nl-send nl-tap&quot; aria-label=&quot;Build this site&quot;&gt;&lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 16 16&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M8 12.75v-9.5M3.9 7.35 8 3.25l4.1 4.1&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_source&quot; value=&quot;netlify_badge&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_campaign&quot; value=&quot;loops&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_medium&quot; value=&quot;owned&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_content&quot; value=&quot;prompt&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_id&quot; value=&quot;abb55760-e154-4ea9-bb47-4962b3d54e68&quot;&gt;
+            
+          &lt;/form&gt;
+          &lt;div class=&quot;nl-or&quot;&gt;&lt;span&gt;or&lt;/span&gt;&lt;/div&gt;
+          &lt;a class=&quot;nl-drop&quot; href=&quot;https://app.netlify.com/drop?utm_source=netlify_badge&amp;utm_campaign=loops&amp;utm_medium=owned&amp;utm_content=drop&amp;utm_id=abb55760-e154-4ea9-bb47-4962b3d54e68&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
+            &lt;span&gt;Drop a site you already have&lt;/span&gt;&lt;span class=&quot;nl-arrow&quot; aria-hidden=&quot;true&quot;&gt;&amp;rarr;&lt;/span&gt;
+          &lt;/a&gt;
+          
+        &lt;/section&gt;
+        &lt;button type=&quot;button&quot; class=&quot;nl-badge&quot; id=&quot;nl-badge&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;nl-card&quot;
+                aria-label=&quot;Powered by Netlify — build your own site&quot;&gt;
+          &lt;svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 32 32&quot; fill=&quot;none&quot; aria-hidden=&quot;true&quot;&gt;
+    &lt;path fill=&quot;#fff&quot; d=&quot;M17.9922 18.3225H14.005L13.6746 17.9921V14.005L14.005 13.6746H17.9922L18.3226 14.005V17.9921L17.9922 18.3225Z&quot;/&gt;
+    &lt;g fill=&quot;#05BDBA&quot;&gt;
+      &lt;path d=&quot;M9.6958 24.3311H9.35705L7.6661 22.6401V22.3041L10.2511 19.7164L12.042 19.7191L12.2808 19.9552V21.7461L9.6958 24.3311Z&quot;/&gt;
+      &lt;path d=&quot;M7.6661 9.69576V9.35701L9.35705 7.66606H9.6958L12.2808 10.2511V12.0392L12.042 12.2808H10.2511L7.6661 9.69576Z&quot;/&gt;
+      &lt;path d=&quot;M10.0457 17.4369H0.205466L0 17.2314V14.7658L0.205466 14.5603H10.0457L10.2511 14.7658V17.2314L10.0457 17.4369Z&quot;/&gt;
+      &lt;path d=&quot;M31.7945 17.4369H21.9544L21.7489 17.2314V14.7658L21.9544 14.5603H31.7945L32 14.7658V17.2314L31.7945 17.4369Z&quot;/&gt;
+      &lt;path d=&quot;M14.5631 10.0456V2.66547L14.7686 2.46001H17.2343L17.4396 2.66547V10.0456L17.2343 10.2511H14.7686L14.5631 10.0456Z&quot;/&gt;
+      &lt;path d=&quot;M14.5631 29.3316V21.9515L14.7686 21.746H17.2343L17.4396 21.9515V29.3316L17.2343 29.5371H14.7686L14.5631 29.3316Z&quot;/&gt;
+    &lt;/g&gt;&lt;/svg&gt;
+          &lt;span&gt;&lt;span class=&quot;nl-badge-label&quot;&gt;Powered by&lt;/span&gt; &lt;span class=&quot;nl-badge-brand&quot;&gt;Netlify&lt;/span&gt;&lt;/span&gt;
+        &lt;/button&gt;
+      &lt;/div&gt;
+      &lt;script&gt;
+        
+    function nlSend(){
+      var wrap=document.querySelector('.nl-wrap'),boxes=[];
+      for(var i=0;i&lt;wrap.children.length;i++){
+        var c=wrap.children[i];
+        if(!c.offsetWidth||!c.offsetHeight)continue;
+        boxes.push({x:c.offsetLeft-wrap.offsetLeft+8,
+                    y:c.offsetTop-wrap.offsetTop+8,
+                    w:c.offsetWidth,h:c.offsetHeight});
+      }
+      parent.postMessage({nlHud:'resize',
+        width:wrap.offsetWidth+26,
+        height:wrap.offsetHeight+26,
+        boxes:boxes},'*');
+    }
+    function nlSendSoon(){requestAnimationFrame(nlSend);}
+    window.addEventListener('load',nlSend);
+    window.addEventListener('message',function(e){
+      if(e.source!==parent||!e.data||e.data.nlHud!=='viewport')return;
+      var s=document.documentElement.style;
+      s.setProperty('--nl-vw',e.data.w+'px');
+      s.setProperty('--nl-vh',e.data.h+'px');
+      document.documentElement.classList.toggle('nl-narrow',e.data.w&lt;600);
+      nlSendSoon();
+    });
+    var nlCoarse=window.matchMedia('(pointer: coarse)').matches;
+    function nlSubmit(form){
+      if(form.requestSubmit)return form.requestSubmit();
+      if(form.checkValidity&amp;&amp;!form.checkValidity())
+        return form.reportValidity&amp;&amp;form.reportValidity();
+      form.submit();
+    }
+  
+        var badge=document.getElementById('nl-badge'),card=document.getElementById('nl-card'),
+            box=card.querySelector('textarea');
+        function setOpen(open){
+          card.classList.toggle('open',open);
+          badge.setAttribute('aria-expanded',open?'true':'false');
+          nlSendSoon();
+          if(open&amp;&amp;!nlCoarse)box.focus();
+        }
+        box.addEventListener('keydown',function(e){
+          if(e.key==='Enter'&amp;&amp;!e.shiftKey){e.preventDefault();nlSubmit(box.form);}
+        });
+        badge.addEventListener('click',function(){setOpen(!card.classList.contains('open'));});
+        document.getElementById('nl-card-close').addEventListener('click',function(){setOpen(false);badge.focus();});
+        document.addEventListener('keydown',function(e){
+          if(e.key==='Escape'&amp;&amp;card.classList.contains('open')){setOpen(false);badge.focus();}
+        });
+        card.addEventListener('click',function(e){
+          if(e.target.closest('#nl-hide'))parent.postMessage({nlHud:'state',value:'hidden'},'*');
+        });
+      &lt;/script&gt;
+    &lt;/body&gt;&lt;/html&gt;" style="position: fixed; bottom: 0px; right: 0px; border: 0px; margin: 0px; padding: 0px; background: transparent; color-scheme: dark; z-index: 2147483645; width: 70px; height: 64px; clip-path: path(&quot;M 0 3 H 57 V 51 H 0 Z&quot;);" data-nl-ready="1"></iframe></body><div class="rkaryvp" style="pointer-events: none; position: absolute; top: 0px; left: 0px; width: 70px; height: 2459px; z-index: 2147483647;"><div style="border-width: medium; border-style: none; border-color: currentcolor; border-image: none; position: absolute; top: 0px; left: 0px; width: 70px; height: 2459px; z-index: 2147483647; pointer-events: auto;"></div></div></html>

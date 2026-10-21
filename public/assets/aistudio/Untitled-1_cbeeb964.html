@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<script src="https://quge5.com/88/tag.min.js" data-zone="267231" async data-cfasync="false"></script>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=5a6ba9c9-00f2-4a02-8ca3-29fb61c18e09
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MultiCraft Vienas Art — Pixel Art Komut Üretici</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Bungee&family=Bangers&family=Anton&family=Oswald:wght@700&family=Bebas+Neue&family=Pacifico&family=Dancing+Script&family=Great+Vibes&family=Sacramento&family=Satisfy&family=Caveat&family=Permanent+Marker&family=Creepster&family=Cinzel&family=UnifrakturMaguntia&family=MedievalSharp&family=Rye&family=Righteous&family=Monoton&family=Orbitron&family=Audiowide&family=Black+Ops+One&family=Chewy&family=Fredoka:wght@600&family=Lobster&family=Playfair+Display:wght@700&family=Roboto+Mono&family=Montserrat:wght@700&display=swap');
+  :root{
+    --bg:#1a1a1a;
+    --card:#232323;
+    --card2:#2a2a2a;
+    --border:#3a3a3a;
+    --text:#eaeaea;
+    --muted:#9a9a9a;
+    --blue:#2f7ff2;
+    --blue-dark:#1f5fc4;
+    --green:#3ecf6b;
+    --green-dark:#2ba854;
+    --accent:#8a5cf6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+  }
+  header{
+    padding:18px 20px 12px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  header h1{
+    margin:0 0 4px;
+    font-size:1.4rem;
+    letter-spacing:0.5px;
+  }
+  header h1 span{ color:var(--accent); }
+  header p{
+    margin:0;
+    color:var(--muted);
+    font-size:0.85rem;
+  }
+
+  .tabbar{
+    position:sticky;
+    top:0;
+    z-index:50;
+    display:flex;
+    background:#151515;
+    border-bottom:1px solid var(--border);
+  }
+  .tabbar button{
+    flex:1;
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    padding:14px 6px;
+    font-size:0.82rem;
+    font-weight:600;
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    transition:color 0.15s ease, border-color 0.15s ease;
+  }
+  .tabbar button.active{
+    color:var(--text);
+    border-bottom-color:var(--accent);
+  }
+  .tabbar button:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+  }
+
+  main{
+    max-width:900px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+  }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; animation:fadeIn 0.2s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:18px;
+  }
+  .card h2{
+    margin:0 0 14px;
+    font-size:1rem;
+    color:#cfcfcf;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .card h2 .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+    display:inline-block;
+  }
+  label.field-label{
+    display:block;
+    font-size:0.85rem;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  input[type="range"], select{
+    width:100%;
+    accent-color:var(--accent);
+  }
+  select{
+    padding:10px;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-size:0.9rem;
+    outline:none;
+    cursor:pointer;
+  }
+  textarea.text-input{
+    width:100%;
+    min-height:90px;
+    resize:vertical;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    padding:10px;
+    font-size:1rem;
+    outline:none;
+  }
+  .size-display{
+    text-align:center;
+    font-size:1.1rem;
+    font-weight:600;
+    margin-top:6px;
+    color:var(--accent);
+  }
+  .recommend-note{
+    text-align:center;
+    font-size:0.78rem;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  input[type="file"]{
+    width:100%;
+    padding:10px;
+    background:var(--card2);
+    border:1px dashed var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-size:0.85rem;
+    outline:none;
+  }
+  .row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  button{
+    cursor:pointer;
+    border:none;
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:0.9rem;
+    font-weight:600;
+    color:#fff;
+    transition:transform 0.08s ease, filter 0.15s ease, opacity 0.15s ease;
+  }
+  button:active{ transform:scale(0.97); }
+  button:disabled{ opacity:0.5; cursor:not-allowed; transform:none; }
+  .btn-blue{ background:linear-gradient(180deg,var(--blue),var(--blue-dark)); flex:1; min-width:160px; }
+  .btn-blue:hover{ filter:brightness(1.1); }
+  .btn-outline{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text);
+  }
+  .btn-outline:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn-green{ background:linear-gradient(180deg,var(--green),var(--green-dark)); width:100%; }
+  .btn-purple{ background:linear-gradient(180deg,var(--accent),#6a3fd8); width:100%; }
+  .btn-full{ width:100%; }
+
+  .mode-toggle{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+    background:#151515;
+    padding:6px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    flex-wrap:wrap;
+  }
+  .mode-toggle button{
+    flex:1;
+    min-width:100px;
+    background:transparent;
+    color:var(--muted);
+    border-radius:8px;
+    padding:10px 8px;
+    font-size:0.8rem;
+  }
+  .mode-toggle button.active{
+    background:linear-gradient(180deg,var(--accent),#6a3fd8);
+    color:#fff;
+  }
+
+  .canvas-wrap{
+    display:flex;
+    justify-content:center;
+    padding:12px;
+    background:#111;
+    border-radius:10px;
+    border:1px solid var(--border);
+    overflow:auto;
+  }
+  canvas{
+    image-rendering:pixelated;
+    max-width:100%;
+    border:1px solid #000;
+  }
+  #manualCanvas{ cursor:crosshair; touch-action:none; }
+  #ieCanvas{ cursor:pointer; touch-action:none; }
+  .meta{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.8rem;
+    color:var(--muted);
+    margin-top:10px;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .parts-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  .part-card{
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    text-align:center;
+  }
+  .part-card h3{
+    margin:0 0 10px;
+    font-size:0.95rem;
+    color:var(--accent);
+  }
+  .empty-state{
+    text-align:center;
+    color:var(--muted);
+    padding:30px 10px;
+    font-size:0.85rem;
+  }
+
+  .swatch-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+    max-height:180px;
+    overflow-y:auto;
+    padding:10px;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+  }
+  .swatch-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    font-size:0.8rem;
+    color:var(--muted);
+    background:#1e1e1e;
+    border-radius:8px;
+    padding:6px 8px;
+    min-width:36px;
+  }
+  .swatch-item input[type="color"]{
+    width:28px;
+    height:24px;
+    border:none;
+    border-radius:4px;
+    background:none;
+    padding:0;
+    cursor:pointer;
+  }
+
+  .step-panel{
+    margin-top:14px;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+  }
+  .step-panel h4{
+    margin:0 0 10px;
+    font-size:0.85rem;
+    color:var(--accent);
+  }
+  .hue-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(72px,1fr));
+    gap:8px;
+  }
+  .hue-swatch{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    background:#1e1e1e;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 4px;
+    font-size:0.72rem;
+    color:var(--text);
+  }
+  .hue-swatch .box{
+    width:28px; height:28px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .block-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    max-height:260px;
+    overflow-y:auto;
+  }
+  .block-list button{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#1e1e1e;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 10px;
+    color:var(--text);
+    font-size:0.78rem;
+    font-weight:400;
+    text-align:left;
+  }
+  .block-list button .box{
+    width:20px; height:20px;
+    border-radius:4px;
+    flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .quick-palette{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:14px;
+    padding:10px;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    min-height:52px;
+  }
+  .palette-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#1e1e1e;
+    border:2px solid var(--border);
+    border-radius:8px;
+    padding:6px 10px;
+    font-size:0.72rem;
+    color:var(--text);
+    cursor:pointer;
+  }
+  .palette-item .box{
+    width:16px; height:16px;
+    border-radius:4px;
+    flex-shrink:0;
+  }
+  .palette-item.active{
+    border-color:var(--accent);
+    background:#2a1f47;
+  }
+
+  .loading-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(10,10,10,0.85);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:1500;
+    flex-direction:column;
+    gap:14px;
+  }
+  .loading-overlay.show{ display:flex; }
+  .spinner{
+    width:46px; height:46px;
+    border:4px solid #3a3a3a;
+    border-top-color:var(--accent);
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .loading-text{ color:var(--text); font-size:0.9rem; }
+  .loading-progress{ color:var(--muted); font-size:0.78rem; }
+
+  .toast{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--green-dark);
+    color:#fff;
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:0.85rem;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+    z-index:2000;
+    max-width:90%;
+    text-align:center;
+  }
+  .toast.show{ opacity:1; }
+  .toast.error{ background:#c0392b; }
+
+  .lock-hint{
+    text-align:center;
+    font-size:0.76rem;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .unlock-btn{
+    background:transparent;
+    border:1px dashed var(--accent);
+    color:var(--accent);
+    width:100%;
+    margin-top:8px;
+    font-size:0.82rem;
+  }
+  .unlock-btn:hover{ background:rgba(138,92,246,0.1); }
+
+  .unlock-card{
+    background:#202020;
+    border:1px solid var(--accent);
+    border-radius:14px;
+    padding:22px 20px;
+    max-width:360px;
+    width:100%;
+  }
+  .unlock-card h3{
+    margin:0 0 14px;
+    font-size:1rem;
+    text-align:center;
+    color:var(--text);
+  }
+  .unlock-card label{
+    display:block;
+    font-size:0.8rem;
+    color:var(--muted);
+    margin:10px 0 6px;
+  }
+  .unlock-card select, .unlock-card input[type="password"]{
+    width:100%;
+    padding:10px;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-size:0.9rem;
+    outline:none;
+  }
+  .unlock-error{
+    color:#ff8080;
+    font-size:0.78rem;
+    margin-top:8px;
+    min-height:1em;
+    text-align:center;
+  }
+
+  .warning-box{
+    background: #332600;
+    border: 1px solid #997300;
+    color: #ffdb4d;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.4;
+  }
+
+  @media(min-width:640px){
+    .parts-grid{ grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">İşleniyor, lütfen bekleyin...</div>
+  <div class="loading-progress" id="loadingProgress"></div>
+</div>
+
+<div class="loading-overlay" id="unlockOverlay">
+  <div class="unlock-card">
+    <h3>🔒 Daha Büyük Boyut Kilidini Aç</h3>
+    <label>Boyut Kademesi</label>
+    <select id="unlockTierSelect"></select>
+    <label>Şifre</label>
+    <input type="password" id="unlockPasswordInput" placeholder="Şifreyi girin">
+    <div class="unlock-error" id="unlockError"></div>
+    <div class="row">
+      <button class="btn-outline" id="unlockCancelBtn" style="flex:1;">Vazgeç</button>
+      <button class="btn-blue" id="unlockConfirmBtn" style="flex:1;">Kilidi Aç</button>
+    </div>
+    <button type="button" class="unlock-btn" id="unlockResetBtn" style="margin-top:14px;">🔄 Bu Cihazdaki Tüm Kilit Açma Kayıtlarını Sıfırla</button>
+  </div>
+</div>
+
+<header>
+  <h1>MultiCraft <span>Vienas Art</span></h1>
+  <p>2D Pixel Art Komut Üretici</p>
+</header>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="tab1">1. Görsel / Metin / Manuel</button>
+  <button class="tab-btn" data-tab="tab2" id="tab2Btn" disabled>2. Canlı Önizleme</button>
+  <button class="tab-btn" data-tab="tab3" id="tab3Btn" disabled>3. WorldEdit Komutları</button>
+</div>
+
+<main>
+
+  <!-- TAB 1 -->
+  <section class="tab-panel active" id="tab1">
+
+    <div class="mode-toggle">
+      <button type="button" class="mode-btn active" id="modeImageBtn" data-mode="image">🖼️ Fotoğraftan Pixel Art'a</button>
+      <button type="button" class="mode-btn" id="modeTextBtn" data-mode="text">🔤 Metin / Emoji Modu</button>
+      <button type="button" class="mode-btn" id="modeManualBtn" data-mode="manual">✏️ Kendin Oluştur</button>
+      <button type="button" class="mode-btn" id="modeIeBtn" data-mode="ie">🎨 /ie Yardımı</button>
+    </div>
+
+    <!-- ===== IMAGE MODE ===== -->
+    <div class="card" id="imageModeSection">
+      <h2><span class="dot"></span>Görsel &amp; Boyut Ayarları</h2>
+
+      <label class="field-label">Görsel Yükle</label>
+      <input type="file" id="imageInput" accept="image/*">
+
+      <div style="margin-top:16px;">
+        <label class="field-label">Boyut (Genişlik, Max 200x)</label>
+        <input type="range" id="sizeSlider" min="1" max="40" value="20">
+        <div class="size-display" id="sizeDisplay">20x</div>
+        <div class="lock-hint" id="sizeLockHint">—</div>
+        <button type="button" class="unlock-btn" id="sizeUnlockBtn">🔓 Daha Büyük Boyut Kilidini Aç</button>
+      </div>
+
+      <div style="margin-top:16px;">
+        <label class="field-label">Komut Kaç Eşit Parçaya Bölünsün?</label>
+        <select id="partSelect"></select>
+      </div>
+
+      <div class="row">
+        <button class="btn-blue btn-full" id="convertBtn">Pixel Art'a Çevir</button>
+      </div>
+    </div>
+
+    <!-- ===== TEXT MODE ===== -->
+    <div class="card" id="textModeSection" style="display:none;">
+      <h2><span class="dot"></span>Metin &amp; Emoji Ayarları</h2>
+
+      <label class="field-label">Metin / Emoji (sınırsız karakter, çok satır destekli)</label>
+      <textarea class="text-input" id="textInput" placeholder="Örn: VIENAS ⚔️🔥"></textarea>
+
+      <div style="margin-top:16px;">
+        <label class="field-label">Yazı Stili (30 Font)</label>
+        <select id="fontSelect"></select>
+        <div class="recommend-note" id="recommendNote">Önerilen boyut: —</div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <label class="field-label" id="textSizeLabel">Tek Harf Boyutu (Satır Yüksekliği, Max 200x)</label>
+        <input type="range" id="textSizeSlider" min="3" max="40" value="25">
+        <div class="size-display" id="textSizeDisplay">25x</div>
+        <div class="recommend-note">Not: Bu değer harfin boyutudur; çok satırlı metinlerde toplam tuval yüksekliği satır sayısına göre otomatik büyür.</div>
+        <div class="lock-hint" id="textSizeLockHint">—</div>
+        <button type="button" class="unlock-btn" id="textSizeUnlockBtn">🔓 Daha Büyük Boyut Kilidini Aç</button>
+      </div>
+
+      <div style="margin-top:16px;">
+        <label class="field-label">Renk Modu</label>
+        <select id="colorModeSelect">
+          <option value="default" selected>Varsayılan (Beton — concrete:concrete)</option>
+          <option value="rainbow">Rainbow (Gökkuşağı Beton Renkleri)</option>
+          <option value="custom">Harf/Emoji Bazlı Özel Renk</option>
+        </select>
+      </div>
+
+      <div id="customSwatchWrap" style="display:none;">
+        <label class="field-label" style="margin-top:12px;">Her Karakter İçin Renk Seç</label>
+        <div class="swatch-list" id="swatchList"></div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <label class="field-label">Komut Kaç Eşit Parçaya Bölünsün? (Metin modunda max 4)</label>
+        <select id="textPartSelect"></select>
+      </div>
+
+      <!-- Live canvas (39x ve altı) -->
+      <div id="textLiveCanvasWrap" class="canvas-wrap" style="margin-top:16px;">
+        <canvas id="textLiveCanvas" width="260" height="130"></canvas>
+      </div>
+
+      <!-- Warning note (40x ve üstü) -->
+      <div id="textHighSizeWarning" class="warning-box" style="display:none;">
+        ⚠️ Bu boyut (40x ve üzeri) canlı önizleme için uygun değil. Düzenlemelerinizi yapın ve ardından aşağıdaki "Sonucu Göster" butonuna basarak önizleme alın. Veya 40x boyutundan daha düşük bir boyut seçin.
+      </div>
+
+      <div class="meta" id="textLiveMeta">
+        <span>Genişlik: —</span>
+        <span>Yükseklik: —</span>
+        <span>Dolu blok: —</span>
+      </div>
+
+      <div class="row">
+        <button class="btn-blue btn-full" id="textContinueBtn">Sonucu Göster →</button>
+      </div>
+    </div>
+
+    <!-- ===== MANUAL DRAW MODE ===== -->
+    <div class="card" id="manualModeSection" style="display:none;">
+      <h2><span class="dot"></span>Kendin Oluştur — Manuel Piksel Çizimi</h2>
+
+      <label class="field-label">Tuval Boyutu (Genişlik = Yükseklik, Max 200x)</label>
+      <input type="range" id="manualSizeSlider" min="1" max="40" value="20">
+      <div class="size-display" id="manualSizeDisplay">20x20</div>
+      <div class="recommend-note">Boyutu değiştirmek tuvali sıfırlar.</div>
+      <div class="lock-hint" id="manualSizeLockHint">—</div>
+      <button type="button" class="unlock-btn" id="manualSizeUnlockBtn">🔓 Daha Büyük Boyut Kilidini Aç</button>
+
+      <div style="margin-top:16px;">
+        <label class="field-label">Komut Kaç Eşit Parçaya Bölünsün?</label>
+        <select id="manualPartSelect"></select>
+      </div>
+
+      <div class="row">
+        <button class="btn-outline btn-full" id="manualAddBtn">➕ Blok / Renk Ekle</button>
+      </div>
+
+      <!-- Step 1: color -->
+      <div class="step-panel" id="manualColorStep" style="display:none;">
+        <h4>Adım 1 — Renk Seçin</h4>
+        <div class="hue-grid" id="hueGrid"></div>
+      </div>
+
+      <!-- Step 2: block -->
+      <div class="step-panel" id="manualBlockStep" style="display:none;">
+        <h4 id="manualBlockStepTitle">Adım 2 — Blok Seçin</h4>
+        <div class="block-list" id="blockList"></div>
+        <div class="row">
+          <button class="btn-outline btn-full" id="manualBackBtn">← Renk Seçimine Dön</button>
+        </div>
+      </div>
+
+      <label class="field-label" style="margin-top:16px;">Hızlı Seçim Paleti (fırça olarak kullanmak için tıkla)</label>
+      <div class="quick-palette" id="quickPalette"></div>
+
+      <div class="row">
+        <button class="btn-outline btn-full" id="manualClearBtn">🧹 Tuvali Sıfırla</button>
+      </div>
+
+      <div class="canvas-wrap" style="margin-top:16px;">
+        <canvas id="manualCanvas" width="320" height="320"></canvas>
+      </div>
+      <div class="meta" id="manualMeta">
+        <span>Genişlik: —</span>
+        <span>Yükseklik: —</span>
+        <span>Dolu blok: —</span>
+      </div>
+
+      <div class="row">
+        <button class="btn-blue btn-full" id="manualContinueBtn">Devam Et → Canlı Önizleme</button>
+      </div>
+    </div>
+
+    <!-- ===== IE MODE ===== -->
+    <div class="card" id="ieModeSection" style="display:none;">
+      <h2><span class="dot"></span>/ie Yardımı — 16x16 Canlı Tuval &amp; HEX Okuyucu</h2>
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:14px; line-height:1.4;">
+        Görseli seçtiğinizde 16x16 optimize edilmiş tuval altta canlı olarak belirir. İstediğiniz piksele tıklayarak HEX kodunu anında görebilirsiniz.
+      </p>
+
+      <label class="field-label">Görsel Yükle (IE İçin)</label>
+      <input type="file" id="ieImageInput" accept="image/*">
+
+      <div id="ieOutputSection" style="display:none; margin-top:16px;">
+         <div class="canvas-wrap">
+           <canvas id="ieCanvas" width="128" height="128"></canvas>
+         </div>
+         <div class="meta" id="ieMeta" style="margin-top:10px;">
+           <span>Durum: Hazır</span>
+           <span id="ieSelectedHex" style="color:var(--accent); font-weight:bold;">Piksele tıklayın</span>
+         </div>
+         <div class="row">
+           <button class="btn-outline btn-full" id="ieCopyAllBtn">Tüm HEX Kodlarını Kopyala (16x16 liste)</button>
+         </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- TAB 2 -->
+  <section class="tab-panel" id="tab2">
+    <div class="card">
+      <h2><span class="dot"></span>Canlı Önizleme</h2>
+      <div class="canvas-wrap">
+        <canvas id="previewCanvas" width="320" height="320"></canvas>
+      </div>
+      <div class="meta" id="previewMeta">
+        <span>Genişlik: —</span>
+        <span>Yükseklik: —</span>
+        <span>Toplam blok: —</span>
+      </div>
+      <div class="row" style="margin-top:16px;">
+        <button class="btn-outline btn-full" id="downloadImgBtn">Piksel Art'ı PNG İndir</button>
+      </div>
+      <div class="row">
+        <button class="btn-blue btn-full" id="generateBtn">Komutları Üret ve Kopyalama Alanına Git</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3 -->
+  <section class="tab-panel" id="tab3">
+    <div class="card">
+      <h2 id="partTitle"><span class="dot"></span>WorldEdit Kopyalama Merkezi</h2>
+
+      <div style="margin-bottom:16px; display:none;" id="copyAllWrap">
+        <button class="btn-purple" id="copyAllBtn">Tüm Parçaları Tek Tıkla Kopyala</button>
+      </div>
+
+      <div id="partsContainer">
+        <div class="empty-state">Henüz komut üretilmedi. Lütfen önizleme sekmesinden "Komutları Üret" butonuna basın.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast">Kopyalandı!</div>
+
+<script>
+(function(){
+
+  // ==================================================================
+  // Tabs
+  // ==================================================================
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  function goToTab(id){
+    tabButtons.forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+    tabPanels.forEach(p=>p.classList.toggle('active', p.id===id));
+  }
+  tabButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.disabled) return;
+      goToTab(btn.dataset.tab);
+    });
+  });
+
+  // ==================================================================
+  // Loading overlay + async/chunked task runner
+  // ==================================================================
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  const loadingText = document.getElementById('loadingText');
+  const loadingProgress = document.getElementById('loadingProgress');
+  const actionButtons = [];
+  let loadingFailsafeTimer = null;
+
+  function setActionButtonsDisabled(disabled){
+    actionButtons.forEach(b=>{ if(b) b.disabled = disabled; });
+  }
+  function showLoading(text){
+    loadingText.textContent = text || 'İşleniyor, lütfen bekleyin...';
+    loadingProgress.textContent = '';
+    loadingOverlay.classList.add('show');
+    setActionButtonsDisabled(true);
+    clearTimeout(loadingFailsafeTimer);
+    loadingFailsafeTimer = setTimeout(()=>{
+      hideLoading();
+      showToast('İşlem zaman aşımına uğradı, tekrar deneyin.', true);
+    }, 30000);
+  }
+  function updateProgress(pct){ loadingProgress.textContent = pct + '%'; }
+  function hideLoading(){
+    loadingOverlay.classList.remove('show');
+    setActionButtonsDisabled(false);
+    clearTimeout(loadingFailsafeTimer);
+    loadingFailsafeTimer = null;
+  }
+  function nextFrame(){
+    return new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve, 0)));
+  }
+  function runWithLoading(text, taskFn){
+    showLoading(text);
+    return Promise.resolve()
+      .then(taskFn)
+      .catch(err=>{
+        console.error(err);
+        showToast('Bir hata oluştu.', true);
+      })
+      .finally(()=>{
+        hideLoading();
+      });
+  }
+
+  // ==================================================================
+  // ŞİFRELİ BOYUT KİLİDİ SİSTEMİ
+  // ==================================================================
+  const SIZE_TIERS = [50, 75, 100, 125, 150, 175, 200];
+  const TIER_PASSWORDS = {
+    50:  'Xk_rTmQ2',
+    75:  'Zq7_LpWx',
+    100: 'Vb_9fYtK',
+    125: 'Hs4_QzRn',
+    150: 'Wp_8mKuV',
+    175: 'Tc5_NyXf',
+    200: 'Rm_3jGqZ'
+  };
+  const FREE_SIZE_LIMIT = 40;
+  const TIER_STORAGE_KEY = 'vieartUnlockedSizeTiers';
+
+  let unlockedTiers = new Set();
+  try{
+    const saved = JSON.parse(localStorage.getItem(TIER_STORAGE_KEY) || '[]');
+    saved.forEach(t=>{ if(SIZE_TIERS.includes(t)) unlockedTiers.add(t); });
+  }catch(e){ unlockedTiers = new Set(); }
+
+  function saveUnlockedTiers(){
+    try{ localStorage.setItem(TIER_STORAGE_KEY, JSON.stringify(Array.from(unlockedTiers))); }
+    catch(e){ }
+  }
+  function getMaxAllowedSize(){
+    let max = FREE_SIZE_LIMIT;
+    SIZE_TIERS.forEach(t=>{ if(unlockedTiers.has(t) && t>max) max=t; });
+    return max;
+  }
+  
+  function updateSliderMaxAttributes(){
+    const maxAllowed = getMaxAllowedSize();
+    [sizeSlider, textSizeSlider, manualSizeSlider].forEach(slider => {
+      if(slider){
+        slider.max = maxAllowed;
+        if(parseInt(slider.value, 10) > maxAllowed){
+          slider.value = maxAllowed;
+        }
+      }
+    });
+  }
+
+  function guardSliderValue(sliderEl){
+    const max = getMaxAllowedSize();
+    if(parseInt(sliderEl.value,10) > max){
+      sliderEl.value = max;
+      return true;
+    }
+    return false;
+  }
+
+  const sizeLockHints = [];
+  function registerLockHint(el){ if(el) sizeLockHints.push(el); }
+  function updateLockHints(){
+    const max = getMaxAllowedSize();
+    const msg = max >= 200
+      ? 'Tüm boyut kademelerinin kilidi açık (200x\'e kadar).'
+      : ('Şu an açık maksimum boyut: ' + max + 'x — daha büyüğü için 🔓 butonunu kullanın.');
+    sizeLockHints.forEach(el=>{ el.textContent = msg; });
+    updateSliderMaxAttributes();
+  }
+
+  const unlockOverlay = document.getElementById('unlockOverlay');
+  const unlockTierSelect = document.getElementById('unlockTierSelect');
+  const unlockPasswordInput = document.getElementById('unlockPasswordInput');
+  const unlockError = document.getElementById('unlockError');
+  const unlockConfirmBtn = document.getElementById('unlockConfirmBtn');
+  const unlockCancelBtn = document.getElementById('unlockCancelBtn');
+
+  function openUnlockModal(){
+    const locked = SIZE_TIERS.filter(t=>!unlockedTiers.has(t));
+    unlockError.textContent = '';
+    unlockPasswordInput.value = '';
+    if(locked.length === 0){
+      unlockTierSelect.innerHTML = '<option value="">— Tüm kademeler zaten açık —</option>';
+      unlockPasswordInput.disabled = true;
+      unlockConfirmBtn.disabled = true;
+    } else {
+      unlockPasswordInput.disabled = false;
+      unlockConfirmBtn.disabled = false;
+      unlockTierSelect.innerHTML = '';
+      locked.forEach(t=>{
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t + 'x';
+        unlockTierSelect.appendChild(opt);
+      });
+    }
+    unlockOverlay.classList.add('show');
+    if(!unlockPasswordInput.disabled) unlockPasswordInput.focus();
+  }
+  function closeUnlockModal(){ unlockOverlay.classList.remove('show'); }
+
+  unlockConfirmBtn.addEventListener('click', ()=>{
+    const tier = parseInt(unlockTierSelect.value, 10);
+    const entered = unlockPasswordInput.value.trim();
+    if(TIER_PASSWORDS[tier] && entered === TIER_PASSWORDS[tier]){
+      unlockedTiers.add(tier);
+      saveUnlockedTiers();
+      closeUnlockModal();
+      updateLockHints();
+      showToast(tier + 'x kilidi açıldı! Tüm modlarda geçerli.');
+    } else {
+      unlockError.textContent = 'Şifre yanlış, tekrar deneyin.';
+    }
+  });
+  unlockCancelBtn.addEventListener('click', closeUnlockModal);
+
+  const unlockResetBtn = document.getElementById('unlockResetBtn');
+  unlockResetBtn.addEventListener('click', ()=>{
+    if(unlockedTiers.size === 0){
+      showToast('Zaten açık kademe yok, sıfırlanacak bir şey yok.');
+      return;
+    }
+    if(!confirm('Bu cihazda açılmış TÜM boyut kilitleri sıfırlanacak. Emin misiniz?')) return;
+    unlockedTiers = new Set();
+    saveUnlockedTiers();
+    updateLockHints();
+    closeUnlockModal();
+    showToast('Tüm kilit açma kayıtları sıfırlandı. Ücretsiz limit tekrar ' + FREE_SIZE_LIMIT + 'x.');
+  });
+
+  // ==================================================================
+  // Mode toggle
+  // ==================================================================
+  let mode = 'image';
+  const modeImageBtn = document.getElementById('modeImageBtn');
+  const modeTextBtn = document.getElementById('modeTextBtn');
+  const modeManualBtn = document.getElementById('modeManualBtn');
+  const modeIeBtn = document.getElementById('modeIeBtn');
+  const imageModeSection = document.getElementById('imageModeSection');
+  const textModeSection = document.getElementById('textModeSection');
+  const manualModeSection = document.getElementById('manualModeSection');
+  const ieModeSection = document.getElementById('ieModeSection');
+
+  function setMode(newMode){
+    mode = newMode;
+    modeImageBtn.classList.toggle('active', mode==='image');
+    modeTextBtn.classList.toggle('active', mode==='text');
+    modeManualBtn.classList.toggle('active', mode==='manual');
+    modeIeBtn.classList.toggle('active', mode==='ie');
+    
+    imageModeSection.style.display = mode==='image' ? 'block' : 'none';
+    textModeSection.style.display = mode==='text' ? 'block' : 'none';
+    manualModeSection.style.display = mode==='manual' ? 'block' : 'none';
+    ieModeSection.style.display = mode==='ie' ? 'block' : 'none';
+    
+    if(mode==='manual' && !manualInitialized){
+      initManualCanvas(parseInt(manualSizeSlider.value,10));
+    }
+  }
+  modeImageBtn.addEventListener('click', ()=>setMode('image'));
+  modeTextBtn.addEventListener('click', ()=>setMode('text'));
+  modeManualBtn.addEventListener('click', ()=>setMode('manual'));
+  modeIeBtn.addEventListener('click', ()=>setMode('ie'));
+
+  // ==================================================================
+  // MultiCraft / Luanti Blok Renk Veritabanı
+  // ==================================================================
+  function hex(h){
+    const n = parseInt(h.replace('#',''), 16);
+    return [(n>>16)&255, (n>>8)&255, n&255];
+  }
+
+  const WOOL_HUE = {
+    white: hex('#eaeced'), grey: hex('#8e8e87'), dark_grey: hex('#3f4448'), black: hex('#15151a'),
+    violet: hex('#7a2aad'), blue: hex('#35399d'), cyan: hex('#158a91'), dark_green: hex('#556e1c'),
+    green: hex('#70b91a'), yellow: hex('#f9c628'), brown: hex('#724829'), orange: hex('#f17614'),
+    red: hex('#a12723'), magenta: hex('#be45b4'), pink: hex('#ee8dac')
+  };
+  const CONCRETE_HUE = {
+    white: hex('#cfd5d6'), grey: hex('#7d7d73'), dark_grey: hex('#373a3e'), black: hex('#080a0f'),
+    violet: hex('#64209c'), blue: hex('#2d2f8f'), cyan: hex('#157788'), dark_green: hex('#495b24'),
+    green: hex('#5ea919'), yellow: hex('#f1af15'), brown: hex('#603c20'), orange: hex('#e06101'),
+    red: hex('#8e2121'), magenta: hex('#a9309f'), pink: hex('#d6658f')
+  };
+  const CLAY_HUE = {
+    white: hex('#d2b2a1'), grey: hex('#876b62'), dark_grey: hex('#3a2a24'), black: hex('#251710'),
+    violet: hex('#764656'), blue: hex('#4a3c5b'), cyan: hex('#575b5b'), dark_green: hex('#4c532a'),
+    green: hex('#687635'), yellow: hex('#ba8523'), brown: hex('#4d3324'), orange: hex('#a25426'),
+    red: hex('#8f3d2f'), magenta: hex('#96586d'), pink: hex('#a24e4f')
+  };
+
+  function mix(c1,c2,t){
+    return [
+      Math.round(c1[0]+(c2[0]-c1[0])*t),
+      Math.round(c1[1]+(c2[1]-c1[1])*t),
+      Math.round(c1[2]+(c2[2]-c1[2])*t)
+    ];
+  }
+
+  function buildBlockTable(){
+    const table = {};
+    Object.keys(CLAY_HUE).forEach(h=>{
+      const base = CLAY_HUE[h];
+      table['hardened_clay:'+h] = base;
+      table['hardened_clay:carved_'+h] = mix(base, [0,0,0], 0.15);
+      table['hardened_clay:cracked_'+h] = mix(base, [150,150,150], 0.18);
+    });
+    const lightHues = {
+      blue:'blue', cyan:'cyan', green:'green', magenta:'magenta',
+      orange:'orange', pink:'pink', red:'red', violet:'violet',
+      white:'white', yellow:'yellow'
+    };
+    Object.keys(lightHues).forEach(blockName=>{
+      const src = WOOL_HUE[lightHues[blockName]];
+      table['mesecons_lightstone:lightstone_' + blockName + '_off'] = mix(src, [255,255,255], 0.45);
+    });
+    Object.keys(WOOL_HUE).forEach(h=>{ table['wool:'+h] = WOOL_HUE[h]; });
+    table['concrete:concrete'] = hex('#b0b0ac');
+    Object.keys(CONCRETE_HUE).forEach(h=>{ table['concrete:concrete_'+h] = CONCRETE_HUE[h]; });
+    table['quartz:quartz_brick_pink'] = mix(hex('#e6e1d8'), WOOL_HUE.pink, 0.35);
+
+    // Ten rengi (deri) blokları — karakter pixel art'larında doğal ten
+    // tonları için kullanılır. Manuel seçim listelerinden GİZLİ tutulur
+    // (BLOCKS_BY_HUE oluşturulurken hariç tutuluyor); sadece görsel/metin
+    // işleme sırasında otomatik ten tonu algılamasıyla (isSkinToneColor)
+    // seçilirler. Üç ton, koyudan açığa doğru bir ten/gölge geçişi
+    // oluşturur — böylece karakterin gölgeli/aydınlık bölgeleri otomatik
+    // olarak doğru tona düşer.
+    table['stripped_wood:apple'] = hex('#c68642'); // orta tonlu ten (gölge/orta bölge)
+    table['stripped_wood:birch'] = hex('#e0ac69'); // açık ten (normal ışık)
+    table['sand']                = hex('#f1c27d'); // en açık / yumuşak ten (highlight)
+
+    return table;
+  }
+
+  const BLOCK_TABLE = buildBlockTable();
+  const BLOCK_ENTRIES = Object.entries(BLOCK_TABLE);
+
+  function srgbToLinear(c){ c=c/255; return c<=0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+  function rgbToXyz(r,g,b){
+    const rl=srgbToLinear(r), gl=srgbToLinear(g), bl=srgbToLinear(b);
+    return [
+      rl*0.4124564+gl*0.3575761+bl*0.1804375,
+      rl*0.2126729+gl*0.7151522+bl*0.0721750,
+      rl*0.0193339+gl*0.1191920+bl*0.9503041
+    ];
+  }
+  function xyzToLab(x,y,z){
+    const Xn=0.95047, Yn=1.0, Zn=1.08883;
+    function f(t){ return t>0.008856 ? Math.cbrt(t) : (7.787*t+16/116); }
+    const fx=f(x/Xn), fy=f(y/Yn), fz=f(z/Zn);
+    return [ (116*fy)-16, 500*(fx-fy), 200*(fy-fz) ];
+  }
+  function rgbToLab(r,g,b){ const [x,y,z]=rgbToXyz(r,g,b); return xyzToLab(x,y,z); }
+
+  const BLOCK_LAB_ENTRIES = BLOCK_ENTRIES.map(([id,c])=>[id, rgbToLab(c[0],c[1],c[2])]);
+
+  // ==================================================================
+  // TEN RENGİ (DERİ) OTOMATİK ALGILAMA
+  //
+  // stripped_wood:apple / stripped_wood:birch / sand blokları manuel
+  // listelerde GÖSTERİLMEZ, ama nearestBlock() bir pikselin "ten rengi"
+  // olduğunu algıladığında SADECE bu 3 blok arasından en yakınını seçer
+  // (ışık/gölgeye göre otomatik apple->birch->sand geçişi). Ten rengi
+  // olmayan hiçbir piksel bu 3 bloğu asla seçemez — aksi halde bej/krem
+  // tonlu duvar, kum, vs. gibi alakasız pikseller yanlışlıkla "deri"
+  // bloklarına eşlenirdi.
+  // ==================================================================
+  const SKIN_BLOCK_IDS = ['stripped_wood:apple', 'stripped_wood:birch', 'sand'];
+  function isSkinToneColor(r,g,b){
+    const maxc = Math.max(r,g,b), minc = Math.min(r,g,b);
+    return (
+      r > 95 && g > 40 && b > 20 &&
+      (maxc - minc) > 15 &&
+      Math.abs(r - g) > 15 &&
+      r > g && r > b
+    );
+  }
+  const SKIN_LAB_ENTRIES = BLOCK_LAB_ENTRIES.filter(([id])=>SKIN_BLOCK_IDS.includes(id));
+  const NORMAL_LAB_ENTRIES = BLOCK_LAB_ENTRIES.filter(([id])=>!SKIN_BLOCK_IDS.includes(id));
+
+  function nearestBlock(r,g,b){
+    const [L,a,bb] = rgbToLab(r,g,b);
+    const searchSet = isSkinToneColor(r,g,b) ? SKIN_LAB_ENTRIES : NORMAL_LAB_ENTRIES;
+    let best=null, bestDist=Infinity;
+    for(const [id, lab] of searchSet){
+      const dL=L-lab[0], da=a-lab[1], db=bb-lab[2];
+      const d=dL*dL+da*da+db*db;
+      if(d<bestDist){ bestDist=d; best=id; }
+    }
+    return best;
+  }
+
+  const RAINBOW_SEQUENCE = [
+    'concrete:concrete_red','concrete:concrete_orange','concrete:concrete_yellow',
+    'concrete:concrete_green','concrete:concrete_cyan','concrete:concrete_blue',
+    'concrete:concrete_violet','concrete:concrete_magenta','concrete:concrete_pink'
+  ];
+
+  const HUE_KEYS_SORTED = ['dark_green','dark_grey','white','cyan','green','blue','yellow','red','orange','magenta','grey','pink','violet','brown','black'];
+  const HUE_LABELS_TR = {
+    white:'Beyaz', grey:'Açık Gri', dark_grey:'Koyu Gri', black:'Siyah',
+    violet:'Mor', blue:'Mavi', cyan:'Camgöbeği', dark_green:'Koyu Yeşil',
+    green:'Açık Yeşil (Lime)', yellow:'Sarı', brown:'Kahverengi', orange:'Turuncu',
+    red:'Kırmızı', magenta:'Menekşe', pink:'Pembe'
+  };
+  function hueCategoryOf(blockId){
+    for(const h of HUE_KEYS_SORTED){
+      const re = new RegExp('(^|[:_])'+h+'($|[_])');
+      if(re.test(blockId)) return h;
+    }
+    return 'grey';
+  }
+  
+  const BLOCKS_BY_HUE = {};
+  HUE_KEYS_SORTED.forEach(h=>{ BLOCKS_BY_HUE[h] = []; });
+  
+  BLOCK_ENTRIES.forEach(([id,rgb])=>{
+    if(SKIN_BLOCK_IDS.includes(id)) return; // ten rengi blokları manuel listede gösterilmez
+    const h = hueCategoryOf(id);
+    if(!BLOCKS_BY_HUE[h]) BLOCKS_BY_HUE[h] = [];
+    BLOCKS_BY_HUE[h].push([id, rgb]);
+  });
+
+  // ==================================================================
+  // Unified grid state
+  // ==================================================================
+  let gridBlocks = null;
+  let gridColors = null;
+  let gridW = 0, gridH = 0;
+  let uploadedImage = null;
+
+  function renderToCanvas(canvasEl, maxPx){
+    if(!gridBlocks || gridW===0 || gridH===0) return;
+    const cell = Math.max(1, Math.floor(maxPx / Math.max(gridW,gridH)));
+    canvasEl.width = gridW*cell;
+    canvasEl.height = gridH*cell;
+    const c = canvasEl.getContext('2d');
+    c.clearRect(0,0,canvasEl.width,canvasEl.height);
+    for(let y=0;y<gridH;y++){
+      for(let x=0;x<gridW;x++){
+        const col = gridColors[y][x];
+        if(!col) continue; 
+        c.fillStyle = 'rgb('+col[0]+','+col[1]+','+col[2]+')';
+        c.fillRect(x*cell, y*cell, cell, cell);
+      }
+    }
+  }
+
+  function countFilled(){
+    let n=0;
+    if(!gridBlocks) return 0;
+    for(let y=0;y<gridH;y++) for(let x=0;x<gridW;x++) if(gridBlocks[y][x]) n++;
+    return n;
+  }
+
+  function get180Rotated(blocks){
+    const h = blocks.length;
+    if(h === 0) return [];
+    const w = blocks[0].length;
+    const rotated = [];
+    for(let y=0; y<h; y++){
+      const row = new Array(w);
+      for(let x=0; x<w; x++){
+        row[x] = blocks[h - 1 - y][w - 1 - x];
+      }
+      rotated.push(row);
+    }
+    return rotated;
+  }
+
+  const previewCanvas = document.getElementById('previewCanvas');
+  const previewMeta = document.getElementById('previewMeta');
+  const downloadImgBtn = document.getElementById('downloadImgBtn');
+  const generateBtn = document.getElementById('generateBtn');
+  const copyAllBtn = document.getElementById('copyAllBtn');
+  const copyAllWrap = document.getElementById('copyAllWrap');
+  const partsContainer = document.getElementById('partsContainer');
+  const partTitle = document.getElementById('partTitle');
+  const toast = document.getElementById('toast');
+  const tab2Btn = document.getElementById('tab2Btn');
+  const tab3Btn = document.getElementById('tab3Btn');
+
+  function renderPreview(){
+    renderToCanvas(previewCanvas, 480);
+    previewMeta.innerHTML =
+      '<span>Genişlik: '+gridW+'</span>'+
+      '<span>Yükseklik: '+gridH+'</span>'+
+      '<span>Toplam blok: '+countFilled()+'</span>';
+  }
+
+  function fillPartSelect(selectEl, maxParts, defaultVal){
+    selectEl.innerHTML = '';
+    for(let i=1;i<=maxParts;i++){
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i===1 ? '1 Parça (Tek parça)' : i+' Parçaya Böl' + (i===defaultVal ? ' (Varsayılan)' : '');
+      if(i===defaultVal) opt.selected = true;
+      selectEl.appendChild(opt);
+    }
+  }
+
+  // ==================================================================
+  // IMAGE MODE
+  // ==================================================================
+  const imageInput = document.getElementById('imageInput');
+  const convertBtn = document.getElementById('convertBtn');
+  const sizeSlider = document.getElementById('sizeSlider');
+  const sizeDisplay = document.getElementById('sizeDisplay');
+  const partSelect = document.getElementById('partSelect');
+
+  actionButtons.push(convertBtn, downloadImgBtn, generateBtn, copyAllBtn);
+  fillPartSelect(partSelect, 10, 6);
+
+  registerLockHint(document.getElementById('sizeLockHint'));
+  document.getElementById('sizeUnlockBtn').addEventListener('click', openUnlockModal);
+
+  sizeSlider.addEventListener('input', ()=>{
+    guardSliderValue(sizeSlider);
+    sizeDisplay.textContent = sizeSlider.value + 'x';
+  });
+
+  imageInput.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const img = new Image();
+    img.onload = ()=>{ uploadedImage = img; showToast('Görsel yüklendi.'); };
+    img.src = URL.createObjectURL(file);
+    e.target.value = '';
+  });
+
+  convertBtn.addEventListener('click', ()=>{
+    if(!uploadedImage){
+      showToast('Önce bir görsel yükleyin!', true);
+      return;
+    }
+    runWithLoading('Pixel art\'a çevriliyor...', async ()=>{
+      await convertImageAsync();
+      tab2Btn.disabled = false;
+      goToTab('tab2');
+      renderPreview();
+    });
+  });
+
+  async function convertImageAsync(){
+    const targetW = parseInt(sizeSlider.value, 10);
+    const targetH = Math.max(1, Math.round(targetW * uploadedImage.height / uploadedImage.width));
+
+    const off = document.createElement('canvas');
+    off.width = targetW; off.height = targetH;
+    const octx = off.getContext('2d');
+    octx.imageSmoothingEnabled = true;
+    octx.drawImage(uploadedImage, 0, 0, targetW, targetH);
+    const data = octx.getImageData(0,0,targetW,targetH).data;
+
+    gridW = targetW; gridH = targetH;
+    gridBlocks = []; gridColors = [];
+
+    const ROWS_PER_CHUNK = 6;
+    for(let y=0;y<targetH;y++){
+      const rowB=[], rowC=[];
+      for(let x=0;x<targetW;x++){
+        const idx=(y*targetW+x)*4;
+        const r=data[idx], g=data[idx+1], b=data[idx+2];
+        const id = nearestBlock(r,g,b);
+        rowB.push(id);
+        rowC.push(BLOCK_TABLE[id]);
+      }
+      gridBlocks.push(rowB);
+      gridColors.push(rowC);
+      if(y % ROWS_PER_CHUNK === 0){
+        updateProgress(Math.round((y/targetH)*100));
+        await nextFrame();
+      }
+    }
+    updateProgress(100);
+  }
+
+  // ==================================================================
+  // TEXT / EMOJI MODE 
+  // ==================================================================
+  const textInput = document.getElementById('textInput');
+  const fontSelect = document.getElementById('fontSelect');
+  const recommendNote = document.getElementById('recommendNote');
+  const textSizeSlider = document.getElementById('textSizeSlider');
+  const textSizeDisplay = document.getElementById('textSizeDisplay');
+  const colorModeSelect = document.getElementById('colorModeSelect');
+  const customSwatchWrap = document.getElementById('customSwatchWrap');
+  const swatchList = document.getElementById('swatchList');
+  const textPartSelect = document.getElementById('textPartSelect');
+  const textLiveCanvasWrap = document.getElementById('textLiveCanvasWrap');
+  const textLiveCanvas = document.getElementById('textLiveCanvas');
+  const textHighSizeWarning = document.getElementById('textHighSizeWarning');
+  const textLiveMeta = document.getElementById('textLiveMeta');
+  const textContinueBtn = document.getElementById('textContinueBtn');
+
+  actionButtons.push(textContinueBtn);
+  fillPartSelect(textPartSelect, 4, 1);
+
+  registerLockHint(document.getElementById('textSizeLockHint'));
+  document.getElementById('textSizeUnlockBtn').addEventListener('click', openUnlockModal);
+
+  const FONT_STYLES = [
+    {id:'press-start-2p', label:'Press Start 2P (Pixel)', family:'"Press Start 2P"', fallback:'monospace', weight:'400', letterSpacingEm:0.02, recommended:40},
+    {id:'vt323', label:'VT323 (Terminal / Pixel)', family:'"VT323"', fallback:'monospace', weight:'400', letterSpacingEm:0.02, recommended:35},
+    {id:'bungee', label:'Bungee (Kalın Display)', family:'"Bungee"', fallback:'sans-serif', weight:'400', letterSpacingEm:0.0, recommended:20},
+    {id:'bangers', label:'Bangers (Çizgi Roman)', family:'"Bangers"', fallback:'cursive', weight:'400', letterSpacingEm:0.02, recommended:22},
+    {id:'anton', label:'Anton (Kalın Dar)', family:'"Anton"', fallback:'sans-serif', weight:'400', letterSpacingEm:0.0, recommended:18},
+    {id:'oswald', label:'Oswald Bold', family:'"Oswald"', fallback:'sans-serif', weight:'700', letterSpacingEm:0.0, recommended:20},
+    {id:'bebas', label:'Bebas Neue (Dar Display)', family:'"Bebas Neue"', fallback:'sans-serif', weight:'400', letterSpacingEm:0.02, recommended:18},
+    {id:'pacifico', label:'Pacifico (El Yazısı)', family:'"Pacifico"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:45},
+    {id:'dancing', label:'Dancing Script (El Yazısı)', family:'"Dancing Script"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:45},
+    {id:'great-vibes', label:'Great Vibes (İnce Kaligrafi)', family:'"Great Vibes"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:50},
+    {id:'sacramento', label:'Sacramento (El Yazısı)', family:'"Sacramento"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:48},
+    {id:'satisfy', label:'Satisfy (El Yazısı)', family:'"Satisfy"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:42},
+    {id:'caveat', label:'Caveat (El Yazısı)', family:'"Caveat"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:38},
+    {id:'marker', label:'Permanent Marker (Kalın Kalem)', family:'"Permanent Marker"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:25},
+    {id:'creepster', label:'Creepster (Korku)', family:'"Creepster"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:30},
+    {id:'cinzel', label:'Cinzel (Roma / Şık)', family:'"Cinzel"', fallback:'serif', weight:'400', letterSpacingEm:0.03, recommended:28},
+    {id:'unifraktur', label:'UnifrakturMaguntia (Gotik)', family:'"UnifrakturMaguntia"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:35},
+    {id:'medieval', label:'MedievalSharp (Ortaçağ)', family:'"MedievalSharp"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:32},
+    {id:'rye', label:'Rye (Vahşi Batı)', family:'"Rye"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:25},
+    {id:'righteous', label:'Righteous (Yuvarlak Display)', family:'"Righteous"', fallback:'sans-serif', weight:'400', letterSpacingEm:0.0, recommended:22},
+    {id:'monoton', label:'Monoton (Neon)', family:'"Monoton"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:20},
+    {id:'orbitron', label:'Orbitron (Bilim Kurgu)', family:'"Orbitron"', fallback:'sans-serif', weight:'700', letterSpacingEm:0.02, recommended:25},
+    {id:'audiowide', label:'Audiowide (Fütüristik)', family:'"Audiowide"', fallback:'sans-serif', weight:'400', letterSpacingEm:0.0, recommended:25},
+    {id:'black-ops', label:'Black Ops One (Askeri Stencil)', family:'"Black Ops One"', fallback:'sans-serif', weight:'400', letterSpacingEm:0.0, recommended:22},
+    {id:'chewy', label:'Chewy (Eğlenceli Kalın)', family:'"Chewy"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:20},
+    {id:'fredoka', label:'Fredoka (Yuvarlak Kalın)', family:'"Fredoka"', fallback:'sans-serif', weight:'600', letterSpacingEm:0.0, recommended:20},
+    {id:'lobster', label:'Lobster (Script/Kalın)', family:'"Lobster"', fallback:'cursive', weight:'400', letterSpacingEm:0.0, recommended:30},
+    {id:'playfair', label:'Playfair Display Bold (Şık Serif)', family:'"Playfair Display"', fallback:'serif', weight:'700', letterSpacingEm:0.0, recommended:30},
+    {id:'roboto-mono', label:'Roboto Mono (Sabit Genişlik)', family:'"Roboto Mono"', fallback:'monospace', weight:'400', letterSpacingEm:0.0, recommended:30},
+    {id:'montserrat', label:'Montserrat Bold (Modern/Varsayılan)', family:'"Montserrat"', fallback:'sans-serif', weight:'700', letterSpacingEm:0.0, recommended:25}
+  ];
+
+  FONT_STYLES.forEach(f=>{
+    const opt = document.createElement('option');
+    opt.value = f.id;
+    opt.textContent = f.label;
+    fontSelect.appendChild(opt);
+  });
+  fontSelect.value = 'montserrat';
+
+  function getSelectedFont(){
+    return FONT_STYLES.find(f=>f.id===fontSelect.value) || FONT_STYLES[FONT_STYLES.length-1];
+  }
+  function fontCssString(f, sizePx){
+    return `${f.weight} ${sizePx}px ${f.family}, ${f.fallback}`;
+  }
+
+  let customColors = {};
+  let lastCharLayout = [];
+
+  function updateRecommendNote(){
+    const f = getSelectedFont();
+    recommendNote.textContent = 'Önerilen tek harf boyutu: ' + f.recommended + 'x';
+  }
+
+  function handleSizeThresholdUI(){
+    const currentSize = parseInt(textSizeSlider.value, 10);
+    if(currentSize >= 40){
+      textLiveCanvasWrap.style.display = 'none';
+      textHighSizeWarning.style.display = 'block';
+      textContinueBtn.textContent = 'Sonucu Göster → Canlı Önizleme';
+    } else {
+      textLiveCanvasWrap.style.display = 'flex';
+      textHighSizeWarning.style.display = 'none';
+      textContinueBtn.textContent = 'Sonucu Göster → Canlı Önizleme';
+    }
+  }
+
+  fontSelect.addEventListener('change', ()=>{
+    const f = getSelectedFont();
+    updateRecommendNote();
+    textSizeSlider.value = f.recommended;
+    guardSliderValue(textSizeSlider);
+    textSizeDisplay.textContent = textSizeSlider.value + 'x';
+    handleSizeThresholdUI();
+    scheduleTextUpdate();
+  });
+  updateRecommendNote();
+
+  textSizeSlider.addEventListener('input', ()=>{
+    guardSliderValue(textSizeSlider);
+    textSizeDisplay.textContent = textSizeSlider.value + 'x';
+    handleSizeThresholdUI();
+    scheduleTextUpdate();
+  });
+
+  colorModeSelect.addEventListener('change', ()=>{
+    customSwatchWrap.style.display = colorModeSelect.value === 'custom' ? 'block' : 'none';
+    if(colorModeSelect.value === 'custom') renderSwatches();
+    scheduleTextUpdate();
+  });
+
+  let textUpdateTimer = null;
+  function scheduleTextUpdate(){
+    clearTimeout(textUpdateTimer);
+    const size = parseInt(textSizeSlider.value, 10);
+    if(size >= 40) return;
+    textUpdateTimer = setTimeout(()=>{ runTextUpdate(true); }, 350);
+  }
+
+  textInput.addEventListener('input', ()=>{
+    if(colorModeSelect.value === 'custom') renderSwatches();
+    scheduleTextUpdate();
+  });
+
+  function runTextUpdate(isLivePreview){
+    if(mode !== 'text') return Promise.resolve();
+    if(!textInput.value.trim()){
+      gridBlocks = null; gridColors = null; gridW = 0; gridH = 0;
+      const c = textLiveCanvas.getContext('2d');
+      c.clearRect(0,0,textLiveCanvas.width,textLiveCanvas.height);
+      textLiveMeta.innerHTML = '<span>Genişlik: —</span><span>Yükseklik: —</span><span>Dolu blok: —</span>';
+      return Promise.resolve();
+    }
+
+    const currentSize = parseInt(textSizeSlider.value, 10);
+    if(isLivePreview && currentSize >= 40){
+      return Promise.resolve();
+    }
+
+    return runWithLoading('Metin işleniyor...', async ()=>{
+      await buildTextGridAsync();
+      tab2Btn.disabled = false;
+      if(currentSize < 40){
+        renderToCanvas(textLiveCanvas, 260);
+      }
+      textLiveMeta.innerHTML =
+        '<span>Genişlik: '+gridW+'</span>'+
+        '<span>Yükseklik: '+gridH+'</span>'+
+        '<span>Dolu blok: '+countFilled()+'</span>';
+    });
+  }
+
+  function layoutText(ctx, lines, refSizePx, letterSpacingEm){
+    const charLayout = [];
+    let maxWidth = 0;
+    let visIndex = 0;
+    const lineHeight = refSizePx * 1.25;
+    lines.forEach((line, li)=>{
+      let x = 0;
+      const chars = Array.from(line);
+      chars.forEach(ch=>{
+        const w = ctx.measureText(ch).width || refSizePx*0.5;
+        const isVisible = ch.trim() !== '';
+        charLayout.push({ ch, line: li, x, w, visIndex: isVisible ? visIndex : -1 });
+        if(isVisible) visIndex++;
+        x += w + letterSpacingEm*refSizePx;
+      });
+      maxWidth = Math.max(maxWidth, x);
+    });
+    return { charLayout, maxWidth, totalHeight: lines.length*lineHeight, lineHeight, visibleCount: visIndex };
+  }
+
+  function renderSwatches(){
+    const f = getSelectedFont();
+    const measureCanvas = document.createElement('canvas');
+    const mctx = measureCanvas.getContext('2d');
+    const REF = 100;
+    mctx.font = fontCssString(f, REF);
+    const lines = textInput.value.split('\n');
+    const layout = layoutText(mctx, lines, REF, f.letterSpacingEm);
+    lastCharLayout = layout.charLayout;
+
+    swatchList.innerHTML = '';
+    const seen = new Set();
+    layout.charLayout.forEach(c=>{
+      if(c.visIndex < 0 || seen.has(c.visIndex)) return;
+      seen.add(c.visIndex);
+      const item = document.createElement('div');
+      item.className = 'swatch-item';
+      const label = document.createElement('span');
+      label.textContent = c.ch;
+      const input = document.createElement('input');
+      input.type = 'color';
+      input.value = customColors[c.visIndex] || '#3ecf6b';
+      input.addEventListener('input', ()=>{
+        customColors[c.visIndex] = input.value;
+        scheduleTextUpdate();
+      });
+      item.appendChild(label);
+      item.appendChild(input);
+      swatchList.appendChild(item);
+    });
+  }
+
+  function cropToBoundingBox(blocks, colors){
+    const h = blocks.length, w = h>0 ? blocks[0].length : 0;
+    let minX=w, maxX=-1, minY=h, maxY=-1;
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        if(blocks[y][x]){
+          if(x<minX) minX=x;
+          if(x>maxX) maxX=x;
+          if(y<minY) minY=y;
+          if(y>maxY) maxY=y;
+        }
+      }
+    }
+    if(maxX < 0) return { blocks: [], colors: [], w: 0, h: 0 };
+    const newBlocks = [], newColors = [];
+    for(let y=minY; y<=maxY; y++){
+      newBlocks.push(blocks[y].slice(minX, maxX+1));
+      newColors.push(colors[y].slice(minX, maxX+1));
+    }
+    return { blocks: newBlocks, colors: newColors, w: maxX-minX+1, h: maxY-minY+1 };
+  }
+
+  async function buildTextGridAsync(){
+    const f = getSelectedFont();
+    const targetLetterHeight = parseInt(textSizeSlider.value, 10);
+    
+    const SCALE = targetLetterHeight >= 40 ? 3 : 6;
+    const REF = 100;
+
+    const measureCanvas = document.createElement('canvas');
+    const mctx = measureCanvas.getContext('2d');
+    mctx.font = fontCssString(f, REF);
+    const lines = textInput.value.split('\n');
+    const layout = layoutText(mctx, lines, REF, f.letterSpacingEm);
+    lastCharLayout = layout.charLayout;
+
+    if(layout.maxWidth <= 0){
+      gridW = 0; gridH = 0; gridBlocks = null; gridColors = null;
+      return;
+    }
+
+    const scaleFactor = (targetLetterHeight * SCALE) / layout.lineHeight;
+    const canvasW = Math.max(SCALE, Math.round(layout.maxWidth * scaleFactor));
+    const canvasH = Math.max(SCALE, Math.round(layout.totalHeight * scaleFactor));
+    gridW = Math.max(1, Math.round(canvasW / SCALE));
+    gridH = Math.max(1, Math.round(canvasH / SCALE));
+
+    const fontSizeFinal = REF * scaleFactor;
+
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = canvasW; maskCanvas.height = canvasH;
+    const mc = maskCanvas.getContext('2d');
+    mc.font = fontCssString(f, fontSizeFinal);
+    mc.textBaseline = 'alphabetic';
+    mc.fillStyle = '#000000';
+
+    const scaledChars = layout.charLayout.map(c=>({
+      ch: c.ch,
+      visIndex: c.visIndex,
+      x: c.x*scaleFactor,
+      w: c.w*scaleFactor,
+      lineTop: c.line*layout.lineHeight*scaleFactor,
+      lineBottom: (c.line+1)*layout.lineHeight*scaleFactor,
+      baselineY: (c.line+0.82)*layout.lineHeight*scaleFactor
+    }));
+
+    let drawn = 0;
+    for(const c of scaledChars){
+      mc.fillText(c.ch, c.x, c.baselineY);
+      drawn++;
+      if(drawn % 40 === 0) await nextFrame();
+    }
+
+    const imgData = mc.getImageData(0,0,canvasW,canvasH).data;
+    const colorMode = colorModeSelect.value;
+
+    gridBlocks = []; gridColors = [];
+    for(let gy=0; gy<gridH; gy++){
+      const rowB = new Array(gridW).fill(null);
+      const rowC = new Array(gridW).fill(null);
+      const py0 = gy*SCALE, py1 = Math.min(canvasH, py0+SCALE);
+      for(let gx=0; gx<gridW; gx++){
+        const px0 = gx*SCALE, px1 = Math.min(canvasW, px0+SCALE);
+        let alphaSum = 0, samples = 0;
+        for(let py=py0; py<py1; py++){
+          for(let px=px0; px<px1; px++){
+            const idx = (py*canvasW+px)*4 + 3;
+            alphaSum += imgData[idx];
+            samples++;
+          }
+        }
+        const avgAlpha = samples>0 ? alphaSum/samples : 0;
+        if(avgAlpha > 60){
+          const cx = gx*SCALE + SCALE/2, cy = gy*SCALE + SCALE/2;
+          let owner = null;
+          for(const c of scaledChars){
+            if(c.visIndex < 0) continue;
+            if(cx >= c.x && cx <= c.x + c.w && cy >= c.lineTop && cy <= c.lineBottom){
+              owner = c; break;
+            }
+          }
+          let blockId;
+          if(colorMode === 'rainbow' && owner){
+            blockId = RAINBOW_SEQUENCE[owner.visIndex % RAINBOW_SEQUENCE.length];
+          } else if(colorMode === 'custom' && owner && customColors[owner.visIndex]){
+            const rgb = hex(customColors[owner.visIndex]);
+            blockId = nearestBlock(rgb[0], rgb[1], rgb[2]);
+          } else {
+            blockId = 'concrete:concrete';
+          }
+          rowB[gx] = blockId;
+          rowC[gx] = BLOCK_TABLE[blockId];
+        }
+      }
+      gridBlocks.push(rowB);
+      gridColors.push(rowC);
+      if(gy % 8 === 0) await nextFrame();
+    }
+
+    const cropped = cropToBoundingBox(gridBlocks, gridColors);
+    gridBlocks = cropped.blocks;
+    gridColors = cropped.colors;
+    gridW = cropped.w;
+    gridH = cropped.h;
+  }
+
+  textContinueBtn.addEventListener('click', async ()=>{
+    if(!textInput.value.trim()){
+      showToast('Önce bir metin girin!', true);
+      return;
+    }
+    await runTextUpdate(false);
+    if(gridBlocks){
+      tab2Btn.disabled = false;
+      goToTab('tab2');
+      renderPreview();
+    }
+  });
+
+  // ==================================================================
+  // MANUAL DRAW MODE
+  // ==================================================================
+  const manualSizeSlider = document.getElementById('manualSizeSlider');
+  const manualSizeDisplay = document.getElementById('manualSizeDisplay');
+  const manualPartSelect = document.getElementById('manualPartSelect');
+  const manualAddBtn = document.getElementById('manualAddBtn');
+  const manualColorStep = document.getElementById('manualColorStep');
+  const manualBlockStep = document.getElementById('manualBlockStep');
+  const manualBlockStepTitle = document.getElementById('manualBlockStepTitle');
+  const manualBackBtn = document.getElementById('manualBackBtn');
+  const hueGrid = document.getElementById('hueGrid');
+  const blockList = document.getElementById('blockList');
+  const quickPalette = document.getElementById('quickPalette');
+  const manualClearBtn = document.getElementById('manualClearBtn');
+  const manualCanvas = document.getElementById('manualCanvas');
+  const manualMeta = document.getElementById('manualMeta');
+  const manualContinueBtn = document.getElementById('manualContinueBtn');
+
+  actionButtons.push(manualAddBtn, manualClearBtn, manualContinueBtn);
+  fillPartSelect(manualPartSelect, 10, 6);
+
+  let manualInitialized = false;
+  let manualPalette = []; 
+  let activeBlockId = null; 
+
+  function initManualCanvas(size){
+    gridW = size; gridH = size;
+    gridBlocks = Array.from({length:size}, ()=>new Array(size).fill(null));
+    gridColors = Array.from({length:size}, ()=>new Array(size).fill(null));
+    manualInitialized = true;
+    renderManualCanvas();
+    updateManualMeta();
+  }
+
+  function renderManualCanvas(){
+    if(!gridBlocks){ return; }
+    renderToCanvas(manualCanvas, 480);
+  }
+  function updateManualMeta(){
+    manualMeta.innerHTML =
+      '<span>Genişlik: '+gridW+'</span>'+
+      '<span>Yükseklik: '+gridH+'</span>'+
+      '<span>Dolu blok: '+(gridBlocks ? countFilled() : 0)+'</span>';
+  }
+
+  registerLockHint(document.getElementById('manualSizeLockHint'));
+  document.getElementById('manualSizeUnlockBtn').addEventListener('click', openUnlockModal);
+
+  manualSizeSlider.addEventListener('change', ()=>{
+    guardSliderValue(manualSizeSlider);
+    const size = parseInt(manualSizeSlider.value, 10);
+    if(countFilled() > 0){
+      if(!confirm('Tuval boyutunu değiştirmek mevcut çiziminizi sıfırlayacaktır. Devam edilsin mi?')){
+        manualSizeSlider.value = gridW; 
+        manualSizeDisplay.textContent = gridW + 'x' + gridW;
+        return;
+      }
+    }
+    manualSizeDisplay.textContent = size + 'x' + size;
+    initManualCanvas(size);
+    showToast('Tuval ' + size + 'x' + size + ' olarak sıfırlandı.');
+  });
+  manualSizeSlider.addEventListener('input', ()=>{
+    guardSliderValue(manualSizeSlider);
+    manualSizeDisplay.textContent = manualSizeSlider.value + 'x' + manualSizeSlider.value;
+  });
+
+  manualAddBtn.addEventListener('click', ()=>{
+    manualBlockStep.style.display = 'none';
+    manualColorStep.style.display = 'block';
+    hueGrid.innerHTML = '';
+    HUE_KEYS_SORTED.forEach(h=>{
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'hue-swatch';
+      const box = document.createElement('div');
+      box.className = 'box';
+      const rgb = WOOL_HUE[h];
+      box.style.background = 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+      const label = document.createElement('span');
+      label.textContent = HUE_LABELS_TR[h] || h;
+      btn.appendChild(box);
+      btn.appendChild(label);
+      btn.addEventListener('click', ()=> showBlockStep(h));
+      hueGrid.appendChild(btn);
+    });
+  });
+
+  function showBlockStep(hue){
+    manualColorStep.style.display = 'none';
+    manualBlockStep.style.display = 'block';
+    manualBlockStepTitle.textContent = 'Adım 2 — ' + (HUE_LABELS_TR[hue]||hue) + ' Tonundaki Bloklar';
+    blockList.innerHTML = '';
+    const list = BLOCKS_BY_HUE[hue] || [];
+    list.forEach(([id, rgb])=>{
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const box = document.createElement('div');
+      box.className = 'box';
+      box.style.background = 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+      const label = document.createElement('span');
+      label.textContent = id;
+      btn.appendChild(box);
+      btn.appendChild(label);
+      btn.addEventListener('click', ()=> addToPalette(id, rgb));
+      blockList.appendChild(btn);
+    });
+  }
+  manualBackBtn.addEventListener('click', ()=>{
+    manualBlockStep.style.display = 'none';
+    manualColorStep.style.display = 'block';
+  });
+
+  function addToPalette(id, rgb){
+    if(!manualPalette.find(p=>p.id===id)){
+      manualPalette.push({ id, rgb });
+    }
+    activeBlockId = id;
+    manualColorStep.style.display = 'none';
+    manualBlockStep.style.display = 'none';
+    renderQuickPalette();
+    showToast(id + ' paletine eklendi ve fırça olarak seçildi.');
+  }
+
+  function renderQuickPalette(){
+    quickPalette.innerHTML = '';
+
+    const eraser = document.createElement('div');
+    eraser.className = 'palette-item' + (activeBlockId===null ? ' active' : '');
+    eraser.innerHTML = '<span>🧹 Sil (Boş)</span>';
+    eraser.addEventListener('click', ()=>{
+      activeBlockId = null;
+      renderQuickPalette();
+    });
+    quickPalette.appendChild(eraser);
+
+    manualPalette.forEach(p=>{
+      const item = document.createElement('div');
+      item.className = 'palette-item' + (activeBlockId===p.id ? ' active' : '');
+      const box = document.createElement('div');
+      box.className = 'box';
+      box.style.background = 'rgb('+p.rgb[0]+','+p.rgb[1]+','+p.rgb[2]+')';
+      const label = document.createElement('span');
+      label.textContent = p.id.split(':')[1] || p.id;
+      item.appendChild(box);
+      item.appendChild(label);
+      item.addEventListener('click', ()=>{
+        activeBlockId = p.id;
+        renderQuickPalette();
+      });
+      quickPalette.appendChild(item);
+    });
+  }
+
+  manualClearBtn.addEventListener('click', ()=>{
+    if(!gridBlocks) return;
+    for(let y=0;y<gridH;y++) for(let x=0;x<gridW;x++){ gridBlocks[y][x]=null; gridColors[y][x]=null; }
+    renderManualCanvas();
+    updateManualMeta();
+    showToast('Tuval temizlendi.');
+  });
+
+  let isPainting = false;
+  function paintAt(clientX, clientY){
+    if(!gridBlocks) return;
+    const rect = manualCanvas.getBoundingClientRect();
+    const scaleX = manualCanvas.width / rect.width;
+    const scaleY = manualCanvas.height / rect.height;
+    const px = (clientX - rect.left) * scaleX;
+    const py = (clientY - rect.top) * scaleY;
+    const cellSize = manualCanvas.width / gridW;
+    const gx = Math.floor(px / cellSize);
+    const gy = Math.floor(py / cellSize);
+    if(gx < 0 || gy < 0 || gx >= gridW || gy >= gridH) return;
+    if(activeBlockId){
+      gridBlocks[gy][gx] = activeBlockId;
+      gridColors[gy][gx] = BLOCK_TABLE[activeBlockId];
+    } else {
+      gridBlocks[gy][gx] = null;
+      gridColors[gy][gx] = null;
+    }
+    renderManualCanvas();
+    updateManualMeta();
+  }
+  manualCanvas.addEventListener('pointerdown', (e)=>{
+    isPainting = true;
+    paintAt(e.clientX, e.clientY);
+  });
+  manualCanvas.addEventListener('pointermove', (e)=>{
+    if(isPainting) paintAt(e.clientX, e.clientY);
+  });
+  window.addEventListener('pointerup', ()=>{ isPainting = false; });
+
+  manualContinueBtn.addEventListener('click', ()=>{
+    if(!gridBlocks || countFilled()===0){
+      showToast('Önce tuvale en az bir blok yerleştirin!', true);
+      return;
+    }
+    tab2Btn.disabled = false;
+    goToTab('tab2');
+    renderPreview();
+  });
+
+  // ==================================================================
+  // IE YARDIMI (16x16 Canlı Tuval & HEX Okuyucu)
+  // ==================================================================
+  const ieImageInput = document.getElementById('ieImageInput');
+  const ieOutputSection = document.getElementById('ieOutputSection');
+  const ieCanvas = document.getElementById('ieCanvas');
+  const ieSelectedHex = document.getElementById('ieSelectedHex');
+  let ieImage = null;
+  let iePixelColors = [];
+
+  ieImageInput.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const img = new Image();
+    img.onload = ()=>{
+      ieImage = img;
+      showToast('IE Görseli yüklendi.');
+      runWithLoading('16x16 canlı tuval hazırlanıyor...', async ()=>{
+        await convertIeAsync();
+      });
+    };
+    img.src = URL.createObjectURL(file);
+    e.target.value = '';
+  });
+
+  function rgbToHexStr(r,g,b){
+    return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
+  }
+
+  async function convertIeAsync(){
+    // NOT: /ie modu, oyundaki bloklara YAKLAŞIK bir eşleştirme değil,
+    // yüklenen görselin GERÇEK/HAM piksel rengini (HEX) gösterir. Bu
+    // yüzden burada nearestBlock() ÇAĞRILMIYOR — amaç orijinal görsel
+    // rengini birebir okumak.
+    const targetW = 16, targetH = 16;
+    const off = document.createElement('canvas');
+    off.width = targetW; off.height = targetH;
+    const octx = off.getContext('2d');
+    octx.imageSmoothingEnabled = true;
+    octx.drawImage(ieImage, 0, 0, targetW, targetH);
+    const data = octx.getImageData(0,0,targetW,targetH).data;
+
+    iePixelColors = Array.from({length: targetH}, () => new Array(targetW).fill(null));
+
+    for(let y=0; y<targetH; y++){
+      for(let x=0; x<targetW; x++){
+        const idx=(y*targetW+x)*4;
+        const r=data[idx], g=data[idx+1], b=data[idx+2], a=data[idx+3];
+        if(a > 20){
+           iePixelColors[y][x] = [r, g, b];
+        }
+      }
+    }
+
+    renderIeCanvas();
+    ieOutputSection.style.display = 'block';
+    ieSelectedHex.textContent = 'Piksele tıklayın';
+    await nextFrame();
+  }
+
+  // Tuval, talep edilen şekilde en fazla 128 piksel (16 blok x 8px) olarak render edilir.
+  const IE_MAX_CANVAS_PX = 128;
+
+  function renderIeCanvas(){
+    const size = 16;
+    const cell = Math.max(1, Math.floor(IE_MAX_CANVAS_PX / size));
+    ieCanvas.width = size * cell;
+    ieCanvas.height = size * cell;
+    const ctx = ieCanvas.getContext('2d');
+    ctx.clearRect(0, 0, ieCanvas.width, ieCanvas.height);
+
+    for(let y=0; y<size; y++){
+      for(let x=0; x<size; x++){
+        const rgb = iePixelColors[y][x];
+        if(rgb){
+          ctx.fillStyle = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+          ctx.fillRect(x * cell, y * cell, cell, cell);
+        } else {
+          ctx.fillStyle = (x + y) % 2 === 0 ? '#1f1f1f' : '#282828';
+          ctx.fillRect(x * cell, y * cell, cell, cell);
+        }
+      }
+    }
+  }
+
+  ieCanvas.addEventListener('click', (e)=>{
+    const rect = ieCanvas.getBoundingClientRect();
+    const scaleX = ieCanvas.width / rect.width;
+    const scaleY = ieCanvas.height / rect.height;
+    const px = (e.clientX - rect.left) * scaleX;
+    const py = (e.clientY - rect.top) * scaleY;
+    const cellSize = ieCanvas.width / 16;
+    const gx = Math.floor(px / cellSize);
+    const gy = Math.floor(py / cellSize);
+
+    if(gx < 0 || gy < 0 || gx >= 16 || gy >= 16) return;
+    const rgb = iePixelColors[gy][gx];
+    if(rgb){
+      const hexStr = rgbToHexStr(rgb[0], rgb[1], rgb[2]);
+      ieSelectedHex.textContent = `[X:${gx}, Y:${gy}] -> ${hexStr}`;
+      fastCopy(hexStr, `HEX Kodu kopyalandı: ${hexStr}`);
+    } else {
+      ieSelectedHex.textContent = `[X:${gx}, Y:${gy}] -> Boş Piksel`;
+    }
+  });
+
+  document.getElementById('ieCopyAllBtn').addEventListener('click', ()=>{
+    if(!iePixelColors.length){
+      showToast('Önce bir görsel yükleyin!', true);
+      return;
+    }
+    const lines = [];
+    for(let y=0; y<16; y++){
+      for(let x=0; x<16; x++){
+        const rgb = iePixelColors[y][x];
+        if(rgb){
+          lines.push(`X:${x} Y:${y} -> ${rgbToHexStr(rgb[0], rgb[1], rgb[2])}`);
+        }
+      }
+    }
+    if(!lines.length){
+      showToast('Kopyalanacak dolu piksel yok!', true);
+      return;
+    }
+    fastCopy(lines.join('\n'), 'Tüm HEX kodları panoya kopyalandı!');
+  });
+
+
+  // ==================================================================
+  // TAB 2: Önizleme
+  // ==================================================================
+  downloadImgBtn.addEventListener('click', ()=>{
+    if(!gridBlocks){
+      showToast('İndirilecek piksel art bulunamadı!', true);
+      return;
+    }
+    const link = document.createElement('a');
+    link.download = 'vienas_pixelart_' + gridW + 'x' + gridH + '.png';
+    link.href = previewCanvas.toDataURL('image/png');
+    link.click();
+    showToast('Piksel Art indirildi.');
+  });
+
+  // ==================================================================
+  // TAB 3: WorldEdit komut üretimi (180° Ters İşleme)
+  // ==================================================================
+  generateBtn.addEventListener('click', ()=>{
+    if(!gridBlocks){
+      showToast('Önce görsel dönüştürün, metin girin veya manuel çizim yapın!', true);
+      return;
+    }
+    runWithLoading('Komutlar hazırlanıyor (180° ters kod dönüşümü uygulanıyor)...', async ()=>{
+      const lines = await generateCommandLinesAsync();
+
+      let activePartSelect = partSelect;
+      if(mode === 'text') activePartSelect = textPartSelect;
+      else if(mode === 'manual') activePartSelect = manualPartSelect;
+
+      const selectedPartsCount = parseInt(activePartSelect.value, 10);
+      const generatedParts = splitIntoParts(lines, selectedPartsCount);
+      window.__generatedPartsCache = generatedParts;
+
+      partTitle.innerHTML = '<span class="dot"></span>WorldEdit Kopyalama Merkezi (' + selectedPartsCount + ' Parça)';
+      renderCommandParts(generatedParts);
+
+      tab3Btn.disabled = false;
+      copyAllWrap.style.display = 'block';
+      goToTab('tab3');
+      showToast('Komutlar hazır (180° ters kodlandı) ve kopyalama sekmesine aktarıldı!');
+    });
+  });
+
+  async function generateCommandLinesAsync(){
+    const rotated = get180Rotated(gridBlocks);
+    const lines = ['/1','/2'];
+    const ROWS_PER_CHUNK = 8;
+    for(let y=0; y<gridH; y++){
+      for(let x=0; x<gridW; x++){
+        const blockId = rotated[y][x];
+        if(blockId){
+          lines.push('/mix ' + blockId);
+        }
+        if(x < gridW - 1){
+          lines.push('/shift x 1');
+        }
+      }
+      if(y < gridH - 1){
+        lines.push('/shift x -' + (gridW - 1));
+        lines.push('/shift y 1');
+      }
+      if(y % ROWS_PER_CHUNK === 0){
+        updateProgress(Math.round((y/gridH)*100));
+        await nextFrame();
+      }
+    }
+    updateProgress(100);
+    return lines;
+  }
+
+  function splitIntoParts(lines, n){
+    const total = lines.length;
+    const base = Math.floor(total/n);
+    let remainder = total % n;
+    const parts = [];
+    let idx = 0;
+    for(let i=0;i<n;i++){
+      let count = base + (remainder>0 ? 1 : 0);
+      if(remainder>0) remainder--;
+      parts.push(lines.slice(idx, idx+count));
+      idx += count;
+    }
+    return parts;
+  }
+
+  function renderCommandParts(parts){
+    partsContainer.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'parts-grid';
+    parts.forEach((part, i)=>{
+      const card = document.createElement('div');
+      card.className = 'part-card';
+      const h3 = document.createElement('h3');
+      h3.textContent = (i+1) + '. Parça (' + part.length + ' Satır Komut)';
+      card.appendChild(h3);
+      const btn = document.createElement('button');
+      btn.className = 'btn-green';
+      btn.textContent = (i+1) + '. Parçayı Kopyala';
+      btn.addEventListener('click', ()=>{ fastCopy(part.join('\n'), (i+1) + '. Parça kopyalandı!'); });
+      card.appendChild(btn);
+      grid.appendChild(card);
+    });
+    partsContainer.appendChild(grid);
+  }
+
+  copyAllBtn.addEventListener('click', ()=>{
+    const cache = window.__generatedPartsCache;
+    if(!cache || !cache.length){
+      showToast('Kopyalanacak komut yok!', true);
+      return;
+    }
+    const fullText = cache.map(p => p.join('\n')).join('\n');
+    fastCopy(fullText, 'Tüm parçalar panoya kopyalandı!');
+  });
+
+  function fastCopy(text, successMsg){
+    if(!navigator.clipboard || !navigator.clipboard.writeText){
+      showToast('Panoya kopyalama bu tarayıcıda desteklenmiyor.', true);
+      return;
+    }
+    navigator.clipboard.writeText(text)
+      .then(()=> showToast(successMsg || 'Kopyalandı!'))
+      .catch(()=> showToast('Kopyalama başarısız.', true));
+  }
+
+  function showToast(msg, isError){
+    toast.textContent = msg;
+    toast.classList.toggle('error', !!isError);
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 1800);
+  }
+
+  updateLockHints();
+  handleSizeThresholdUI();
+
+})();
+</script>
+
+</body>
+</html>
