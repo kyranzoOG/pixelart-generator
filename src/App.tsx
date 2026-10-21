@@ -1578,15 +1578,7 @@ export default function App() {
       {/* Footer */}
       <footer className="relative z-10 text-center py-6 text-xs text-[#8ca36d] border-t border-[#233113] bg-[#000000]/80 backdrop-blur-md">
         <p>
-          Built by <span className="text-white font-semibold">Kyranzo</span> &bull;{' '}
-          <a
-            href="https://github.com/kyranzo/pixelart-generator"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#bef264] hover:underline font-mono"
-          >
-            mydomain/pixelart-generator
-          </a>
+          Built by <span className="text-white font-semibold">Kyranzo</span>
         </p>
       </footer>
     </div>
