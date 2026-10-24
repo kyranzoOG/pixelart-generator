@@ -1,4 +1,5 @@
 import React from 'react';
+import logoSvgUrl from '../../inv_themes_dark_inventory_theme_grid-1.svg';
 
 interface IconProps {
   className?: string;
@@ -8,15 +9,11 @@ interface IconProps {
 
 export const LogoSvg: React.FC<IconProps> = ({ className = 'w-8 h-8', size = 32 }) => (
   <img
-    src="./pixelart.png"
+    src={logoSvgUrl}
     alt="Pixel Art Generator Logo"
     width={size}
     height={size}
-    className={`object-contain rounded-lg ${className}`}
-    onError={(e) => {
-      // Fallback if pixelart.png hasn't been uploaded yet
-      (e.target as HTMLElement).style.display = 'none';
-    }}
+    className={`object-contain [image-rendering:pixelated] ${className}`}
   />
 );
 
